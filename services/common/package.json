@@ -1,0 +1,27 @@
+{
+  "name": "@m-nny/common",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "./dist/index",
+  "types": "./dist/index",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "flat": "^5.0.2",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1",
+    "pino": "^6.11.2",
+    "pino-pretty": "^4.7.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/flat": "^5.0.1",
+    "@types/lodash": "^4.14.168",
+    "@types/pino": "^6.3.6",
+    "@types/uuid": "^8.3.0"
+  }
+}

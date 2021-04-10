@@ -1,0 +1,15 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 9001,
+  "username": "m-nny",
+  "password": "change-in-production",
+  "database": "scrapper",
+  "synchronize": true,
+  "logging": true,
+  "entities": ["src/modules/**/*Entity.ts"],
+  "migrations": ["src/modules/migrations/*.ts"],
+  "cli": {
+    "migrationsDir": "src/modules/migrations"
+  }
+}
