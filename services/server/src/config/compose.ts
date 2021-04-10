@@ -4,13 +4,7 @@ import { ConfigShape } from './default';
 export const composeConfig = configUtils.createAppEnvConfig<ConfigShape>({
     env: 'compose',
     cors: {
-        origin: ['https://ent.aeroexam.org'],
-    },
-    auth: {
-        disabled: false,
-        jwt: {
-            ignoreExpiration: false,
-        },
+        origin: [],
     },
     pg: {
         host: 'student_db',

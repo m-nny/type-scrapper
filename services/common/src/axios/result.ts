@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { OkResult } from '../models';
 export const resultErrorCodes = [
     'NOT_FOUND',
     'BAD_REQUEST',
@@ -25,6 +24,10 @@ export type ResultError<P = unknown> = {
     error?: any;
     retries?: number;
 };
+
+export const okResult = { result: 'ok' };
+export type OkResult = typeof okResult;
+
 export type Result<D, P = unknown> = D | ResultError<P>;
 export type AsyncResult<D, P = unknown> = Promise<Result<D, P>>;
 export type AsyncOkResult = AsyncResult<OkResult>;

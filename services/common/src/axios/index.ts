@@ -1,7 +1,5 @@
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import _ from 'lodash';
 import { RetryArgs } from '../utils';
-import { makeUrlMap, MakeUrlMapArg } from '../utils/url';
 import { AsyncResult, getResultErrorCode, makeResultError, ResultError } from './result';
 import { retryAsyncResult } from './retry';
 
@@ -21,15 +19,6 @@ const makeAxiosRequestWithRetry = (defaultConfig: AxiosRequestConfig, retryArgs:
     const axios = Axios.create(defaultConfig);
     return <T, P = unknown>(requestConfig: AxiosRequestConfig) =>
         axiosRequestWithRetry<T, P>(axios, requestConfig, retryArgs);
-};
-
-export const makeMicroserviceApis = <M extends MakeUrlMapArg>(
-    map: M,
-    retryArgs: RetryArgs,
-    config?: AxiosRequestConfig,
-) => {
-    const urlMap = makeUrlMap(map);
-    return _.mapValues(urlMap, (baseURL) => makeAxiosRequestWithRetry({ ...config, baseURL }, retryArgs));
 };
 
 export const makeAxiosResultError = <E>(error: any): ResultError<E> => {

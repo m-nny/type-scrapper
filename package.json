@@ -1,12 +1,14 @@
 {
-  "name": "type-scrapper",
+  "name": "@m-nny/type-scrapper",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "tsc --build",
-    "build:clean": "rimraf services/**/dist && yarn build"
+    "build:clean": "rimraf services/**/dist && yarn build",
+    "---workspaces---": "",
+    "server": "yarn workspace @m-nny/server"
   },
   "workspaces": [
     "services/**"

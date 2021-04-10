@@ -3,7 +3,7 @@ import { AppEnv, PartialConfigShape, PlainConfigShape } from '@m-nny/common/dist
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,
-    port: configUtils.number(3002),
+    port: configUtils.number(3001),
     rootPrefix: configUtils.string(''),
     cors: {
         origin: configUtils.string.array(['*']),
@@ -11,10 +11,10 @@ export const defaultConfig = configUtils.createConfig({
     },
     pg: {
         host: configUtils.string('localhost'),
-        port: configUtils.number(9002),
-        username: configUtils.string('aero'),
+        port: configUtils.number(9001),
+        username: configUtils.string('m-nny'),
         password: configUtils.string('change-in-production'),
-        database: configUtils.string('student_db'),
+        database: configUtils.string('scrapper'),
         ssl: {
             disabled: configUtils.boolean(true),
             ca: configUtils.string(''),
@@ -25,26 +25,6 @@ export const defaultConfig = configUtils.createConfig({
         logging: configUtils.boolean(true),
         synchronize: configUtils.boolean(true),
         migrationsRun: configUtils.boolean(false),
-    },
-    auth: {
-        disabled: configUtils.boolean(false),
-        jwt: {
-            secret: configUtils.string('change-in-production'),
-            expiresIn: configUtils.string('30 days'),
-            issuer: configUtils.string('aero-ent'),
-            ignoreExpiration: configUtils.boolean(false),
-        },
-    },
-    override: {
-        testCenter: {
-            cameraHostname: configUtils.string('10.200.1.1:60081'),
-        },
-    },
-    retries: {
-        timeout: configUtils.number(5),
-    },
-    exam: {
-        estimatedDuration: configUtils.number(4 * 60 * 60), // in seconds
     },
 });
 export type ConfigShape = typeof defaultConfig;
