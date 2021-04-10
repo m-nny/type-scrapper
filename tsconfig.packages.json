@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
+    "target": "ES2018",
+    "lib": ["ES2018", "ESNext.AsyncIterable"],
     "strict": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
