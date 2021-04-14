@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 import { Arg, Args, Mutation, Query, Resolver } from 'type-graphql';
-import { NewRecipeInput, RecipeArgs, RecipesArgs } from './dto';
+import { ListPageArgs } from '../common/dto';
+import { NewRecipeInput, RecipeArgs } from './dto';
 import { Recipe } from './Recipe';
 import { RecipeService } from './RecipeService';
 import { RecipeNotFoundError } from './utils';
@@ -20,7 +21,7 @@ export class RecipeResolver {
     }
 
     @Query(() => [Recipe])
-    public recipes(@Args() { skip, take }: RecipesArgs): Promise<Recipe[]> {
+    public recipes(@Args() { skip, take }: ListPageArgs): Promise<Recipe[]> {
         return this.recipeService.findAll({ skip, take });
     }
 
