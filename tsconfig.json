@@ -1,5 +1,9 @@
 {
-  "references": [{ "path": "services/server" }],
+  "references": [
+    { "path": "services/queue" },
+    { "path": "services/server" },
+    { "path": "services/worker" },
+  ],
   "files": [],
   "include": [],
   "exclude": ["**/node_modules"]
