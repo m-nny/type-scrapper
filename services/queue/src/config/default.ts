@@ -17,7 +17,7 @@ export const defaultConfig = configUtils.createConfig({
     },
     queue: {
         connection: {
-            hostname: configUtils.string('localhost'),
+            host: configUtils.string('localhost'),
             port: configUtils.number(6379),
         },
         names: {

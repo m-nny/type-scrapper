@@ -8,6 +8,10 @@ export const configureContainer = async (configOverride?: PartialConfig) => {
     const config = loadConfig(configOverride);
     const container = tsyringeContainer.createChildContainer();
     const redis = new Redis(config.queue.connection);
+    redis.on('error', (err) => {
+        logger.error(err, 'REDIS: FAILED');
+        process.exit(0);
+    });
     const logger = makeLogger(config);
     return container
         .register(ConfigWrapper, { useValue: new ConfigWrapper(config) })

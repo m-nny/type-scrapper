@@ -1,0 +1,40 @@
+FROM node:lts-alpine as build
+
+WORKDIR /app
+
+COPY package.json .
+COPY yarn.lock .
+COPY services/common/package.json ./services/common/package.json
+ARG microservice
+RUN test -n "${microservice}" && echo "Building ${microservice}"
+COPY services/${microservice}/package.json ./services/${microservice}/package.json
+
+RUN yarn install --pure-lockfile --non-interactive --silent && yarn cache clean
+
+COPY tsconfig.packages.json .
+COPY services/common ./services/common/
+COPY services/${microservice} ./services/${microservice}/
+
+WORKDIR /app/services/${microservice}
+RUN yarn build
+
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY package.json .
+COPY yarn.lock .
+
+ARG microservice
+RUN test -n "${microservice}" && echo "Building ${microservice}"
+ENV NODE_ENV=production
+COPY --from=build /app/services/common/package.json /app/services/common/package.json
+COPY --from=build /app/services/${microservice}/package.json /app/services/${microservice}/package.json
+RUN yarn install --pure-lockfile --non-interactive --production --silent && yarn cache clean
+
+COPY --from=build /app/services/common/dist /app/services/common/dist
+COPY --from=build /app/services/${microservice}/dist /app/services/${microservice}/dist
+
+WORKDIR /app/services/${microservice}
+
+CMD ["yarn", "start:js"]

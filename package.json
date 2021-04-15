@@ -8,7 +8,9 @@
     "build": "tsc --build",
     "build:clean": "rimraf services/**/dist && yarn build",
     "---workspaces---": "",
-    "server": "yarn workspace @m-nny/server"
+    "queue": "yarn workspace @m-nny/queue",
+    "server": "yarn workspace @m-nny/server",
+    "worker": "yarn workspace @m-nny/worker"
   },
   "workspaces": [
     "services/**"

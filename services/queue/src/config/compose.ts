@@ -8,7 +8,7 @@ export const composeConfig = configUtils.createAppEnvConfig<ConfigShape>({
     },
     queue: {
         connection: {
-            hostname: 'redis',
+            host: 'redis',
         },
     },
 });

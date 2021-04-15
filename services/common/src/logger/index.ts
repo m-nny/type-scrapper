@@ -16,7 +16,7 @@ const prettyPrint: LoggerOptions['prettyPrint'] = {
 };
 
 export const makeLogger = (config: CreateLoggerArgs): AppLogger => {
-    const logger = pino({ ...config.logger, ...(config.logger.prettyPrint === true && prettyPrint) });
+    const logger = pino({ ...config.logger, ...(config.logger.prettyPrint ? prettyPrint : undefined) });
 
     logger.fatal = logger.fatal.bind(logger);
     logger.error = logger.error.bind(logger);

@@ -16,6 +16,31 @@ services:
     image: redis:6.2.1-alpine
     ports:
       - 6379:6379
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        microservice: server
+    env_file: .env.common
+    ports: 
+      - 3001:3001
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        microservice: worker
+    env_file: .env.common
+  queue:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        microservice: queue
+    env_file: .env.common
+    ports: 
+      - 3002:3002
 
 volumes:
   # Postgres' data

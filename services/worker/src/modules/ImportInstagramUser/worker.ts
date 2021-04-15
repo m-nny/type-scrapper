@@ -18,9 +18,3 @@ export class ImportInstagramUserWorker {
         this.logger.info(data, `importing instagram user @${data.username}`);
     };
 }
-
-export const makeInstagramUserQueue = (container: DependencyContainer): Queue => {
-    const { config } = container.resolve(ConfigWrapper);
-    const { redis } = container.resolve(RedisWrapper);
-    return new Queue(config.queue.names.importInstagramUser, { connection: redis });
-};

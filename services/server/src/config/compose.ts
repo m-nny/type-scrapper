@@ -4,10 +4,9 @@ import { ConfigShape } from './default';
 export const composeConfig = configUtils.createAppEnvConfig<ConfigShape>({
     env: 'compose',
     cors: {
-        origin: [],
     },
     pg: {
-        host: 'student_db',
+        host: 'db',
         port: 5432,
     },
     typeorm: {
