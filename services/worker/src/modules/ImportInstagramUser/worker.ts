@@ -1,14 +1,15 @@
 import { AppLogger } from '@m-nny/common';
-import { Processor, Worker } from 'bullmq';
-import { singleton } from 'tsyringe';
+import { Processor, Queue, Worker } from 'bullmq';
+import { DependencyContainer, singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../config';
+import { RedisWrapper } from '../utils/wrappers';
 import { ImportInstagramUserData } from './types';
 
 @singleton()
 export class ImportInstagramUserWorker {
     private worker: Worker<ImportInstagramUserData>;
-    public constructor({ config }: ConfigWrapper, private logger: AppLogger) {
-        this.worker = new Worker(config.queue.names.importInstagramUser, this.jobProcessor);
+    public constructor(private logger: AppLogger, { config }: ConfigWrapper, { redis }: RedisWrapper) {
+        this.worker = new Worker(config.queue.names.importInstagramUser, this.jobProcessor, { connection: redis });
     }
     public waitUntilReady = () => this.worker.waitUntilReady();
     private jobProcessor: Processor<ImportInstagramUserData> = async (job) => {
@@ -17,3 +18,9 @@ export class ImportInstagramUserWorker {
         this.logger.info(data, `importing instagram user @${data.username}`);
     };
 }
+
+export const makeInstagramUserQueue = (container: DependencyContainer): Queue => {
+    const { config } = container.resolve(ConfigWrapper);
+    const { redis } = container.resolve(RedisWrapper);
+    return new Queue(config.queue.names.importInstagramUser, { connection: redis });
+};

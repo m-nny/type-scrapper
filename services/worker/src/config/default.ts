@@ -1,10 +1,16 @@
 import { configUtils, defaultLoggerOptions } from '@m-nny/common';
 import { AppEnv, PartialConfigShape, PlainConfigShape } from '@m-nny/common/dist/config/types';
+import { WorkerRole } from '../modules/common/types';
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,
+    port: configUtils.number(3002),
+    role: configUtils.string<WorkerRole>('worker'),
     logger: {
-        ...defaultLoggerOptions
+        ...defaultLoggerOptions,
+    },
+    adminPanel: {
+        endpoint: '/admin',
     },
     queue: {
         connection: {
