@@ -13,8 +13,9 @@
       "runtimeArgs": ["worker", "dev"],
       "outputCapture": "std",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "envFile": "${workspaceFolder}/.env",
       "env": {
-        "AERO_logger_level": "debug"
+        "m_nny_logger_level": "debug"
       }
     }
   ]

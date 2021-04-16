@@ -14,8 +14,10 @@
     "bullmq": "^1.16.2",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
+    "instagram-private-api": "^1.44.1",
     "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
+    "tough-cookie-file-store": "^2.0.2",
     "tsyringe": "^4.4.0"
   },
   "devDependencies": {

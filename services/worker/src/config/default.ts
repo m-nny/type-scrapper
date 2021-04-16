@@ -1,6 +1,5 @@
 import { configUtils, defaultLoggerOptions } from '@m-nny/common';
 import { AppEnv, PartialConfigShape, PlainConfigShape } from '@m-nny/common/dist/config/types';
-import { WorkerRole } from '../modules/common/types';
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,
@@ -15,6 +14,15 @@ export const defaultConfig = configUtils.createConfig({
         names: {
             importInstagramUser: configUtils.string('import_insta_user'),
         },
+    },
+    instagram: {
+        device: {
+            seed: configUtils.string('seed'),
+        },
+        credentials: {
+            username: configUtils.string('username'),
+            password: configUtils.string('password'),
+        }
     },
 });
 export type ConfigShape = typeof defaultConfig;

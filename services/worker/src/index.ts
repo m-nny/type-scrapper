@@ -1,7 +1,8 @@
-import 'reflect-metadata';
 import { AppLogger } from '@m-nny/common';
+import { isResultError, ResultError2 } from '@m-nny/common/src/axios';
+import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
-import { configureContainer } from './app';
+import { configureContainer, initializeServices } from './app';
 import { ImportInstagramUserWorker } from './modules/ImportInstagramUser/worker';
 
 const runWorker = async (container: DependencyContainer) => {
@@ -13,6 +14,12 @@ const runWorker = async (container: DependencyContainer) => {
 
 const runApp = async () => {
     const container = await configureContainer();
+    const isInitialized = await initializeServices(container);
+    const logger = container.resolve(AppLogger);
+    if (isResultError(isInitialized)) {
+        throw new ResultError2(isInitialized);
+    }
+    logger.info(isInitialized, 'Modules initialized');
     return runWorker(container);
 };
 
