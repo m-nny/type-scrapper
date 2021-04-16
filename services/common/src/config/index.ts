@@ -6,7 +6,7 @@ import util from 'util';
 import { AppEnv, AppEnvConfigShape, appEnvs, PartialConfigShape, PlainConfigShape, RootConfigShape } from './types';
 import { loadStrFromFile } from './utils';
 
-const PROJECT_PREFIX = 'AERO';
+const PROJECT_PREFIX = 'm_nny';
 const APP_ENV_KEY = `${PROJECT_PREFIX}_ENV` as const;
 
 export const getAppEnvironment = (str: string | undefined): AppEnv => {

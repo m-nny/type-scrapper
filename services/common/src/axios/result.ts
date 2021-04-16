@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { isNumber, isString } from 'lodash';
 export const resultErrorCodes = [
     'NOT_FOUND',
     'BAD_REQUEST',
@@ -25,7 +25,7 @@ export type ResultError<P = unknown> = {
     retries?: number;
 };
 
-export const okResult = { result: 'ok' };
+export const okResult = { result: 'ok' } as const;
 export type OkResult = typeof okResult;
 
 export type Result<D, P = unknown> = D | ResultError<P>;
@@ -43,8 +43,43 @@ export const makeResultError = <P>(
 
 export const getResultErrorCode = (status: number | undefined): ResultErrorCode => {
     if (status === undefined) return 'NETWORK';
+    if (status === 400) return 'BAD_REQUEST';
     if (status === 401) return 'UNAUTHORIZED';
+    if (status === 403) return 'FORBIDDEN';
     if (status === 404) return 'NOT_FOUND';
+    if (status === 429) return 'TOO_MANY_REQUESTS';
     if (status === 500) return 'INTERNAL_ERROR';
     return 'UNKNOWN';
 };
+
+export const throwIfError = <D, P>(result: Result<D, P>): D => {
+    if (isResultError(result)) {
+        throw new ResultError2(result);
+    }
+    return result;
+};
+
+type MakeResultErrorOnRejectArg = {
+    message?: string;
+    code?: ResultErrorCode;
+};
+export const makeResultErrorOnReject = ({ code, message }: MakeResultErrorOnRejectArg = {}) => <P>(
+    error: any,
+): ResultError<P> => {
+    if (isString(error?.message)) {
+        message = error.message;
+    }
+    if (isNumber(error?.code)) {
+        code = code ?? getResultErrorCode(error.code);
+    }
+    if (isNumber(error?.response?.statusCode)) {
+        code = code ?? getResultErrorCode(error.response.statusCode);
+    }
+    console.log('makeResultErrorOnReject', error?.code, error?.response?.statusCode);
+    return makeResultError(code ?? 'UNKNOWN', message ?? 'unknown error happened', { error });
+};
+export class ResultError2<P> extends Error {
+    public constructor(public error: ResultError<P>) {
+        super(error.message);
+    }
+}

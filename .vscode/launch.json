@@ -7,14 +7,29 @@
     {
       "type": "pwa-node",
       "request": "launch",
+      "name": "igram",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["igram", "dev"],
+      "outputCapture": "std",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "m_nny_logger_level": "debug"
+      }
+    },
+    {
+      "type": "pwa-node",
+      "request": "launch",
       "name": "worker",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["worker", "dev"],
       "outputCapture": "std",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "envFile": "${workspaceFolder}/.env",
       "env": {
-        "AERO_logger_level": "debug"
+        "m_nny_logger_level": "debug"
       }
     }
   ]
