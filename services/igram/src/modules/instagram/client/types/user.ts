@@ -1,6 +1,14 @@
+import {
+    TInstagramDimensions,
+    TInstagramEdge,
+    TInstagramEdgeCount,
+    TInstagramUsername,
+    TInstagramUsernameAndId,
+} from './common';
+// cspell:disable
+
 type UnknownType = '';
 
-// cspell:disable
 export type TInstagramUser = {
     biography: string;
     blocked_by_viewer: boolean;
@@ -44,21 +52,6 @@ export type TInstagramUser = {
     edge_media_collections: TInstagramEdge<UnknownType>;
 };
 
-type TInstagramEdgeCount = {
-    count: number;
-};
-
-type TInstagramPageInfo = {
-    has_next_page: boolean;
-    end_cursor: null | string;
-};
-
-type TInstagramEdge<E> = {
-    count?: number;
-    page_info?: TInstagramPageInfo;
-    edges?: null | Array<{ node: E }>;
-};
-
 type TInstagramTimelineMedia = {
     __typename: string;
     id: string;
@@ -72,7 +65,7 @@ type TInstagramTimelineMedia = {
     sharing_friction_info: TInstagramSharingFrictionInfo;
     media_overlay_info: null | UnknownType;
     media_preview: string | null;
-    owner: TInstagramMediaOwner;
+    owner: TInstagramUsernameAndId;
     is_video: boolean;
     accessibility_caption: string;
     edge_media_to_caption: TInstagramEdge<TInstagramCaption>;
@@ -87,11 +80,6 @@ type TInstagramTimelineMedia = {
     edge_sidecar_to_children?: TInstagramEdge<TInstagramSidecarChild>;
 };
 
-type TInstagramDimensions = {
-    height: number;
-    width: number;
-};
-
 type TInstagramTaggedUser = {
     user: {
         full_name: string;
@@ -104,24 +92,12 @@ type TInstagramTaggedUser = {
     y: number;
 };
 
-type TInstagramMediaOwner = {
-    id: string;
-    username: string;
-};
-type TInstagramUsername = {
-    username: string;
-};
-
 type TInstagramCaption = {
     text: string;
 };
 
 type TInstagramComment = {
     text: string;
-};
-
-type EdgeMediaPreviewLike = {
-    count: number;
 };
 
 type TInstagramLocation = {
@@ -150,7 +126,7 @@ type TInstagramSidecarChild = {
     sharing_friction_info: TInstagramSharingFrictionInfo;
     media_overlay_info: null | UnknownType;
     media_preview: null | string;
-    owner: TInstagramMediaOwner;
+    owner: TInstagramUsernameAndId;
     is_video: boolean;
     accessibility_caption: string;
 };

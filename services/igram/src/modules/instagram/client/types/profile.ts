@@ -1,3 +1,4 @@
+// cspell:disable
 
 export type TInstagramProfileEditParams = {
     should_show_confirmation_dialog: boolean;

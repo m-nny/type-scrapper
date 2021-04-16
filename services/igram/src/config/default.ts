@@ -19,7 +19,7 @@ export const defaultConfig = configUtils.createConfig({
         },
         cookie: {
             disabled: configUtils.boolean(false),
-            path: configUtils.string('../data/cookies/instagram.json'),
+            path: configUtils.string('../../data/cookies/instagram.json'),
         },
     },
 });

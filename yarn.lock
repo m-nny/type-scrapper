@@ -436,7 +436,14 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@types/tough-cookie@^4.0.0":
+"@types/tough-cookie-file-store@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/tough-cookie-file-store/-/tough-cookie-file-store-2.0.1.tgz#15274a1a8695c914224c7eda22cb1c8ff5fa7ceb"
+  integrity sha512-j/CHsAwBqdVZP/nI27iA2dezUzBFz0fQs2Ek7VTjOPw2usOeffKLsqC3eDs+lfCTAaiHWRU8+RuEU1fCrmpeLw==
+  dependencies:
+    "@types/tough-cookie" "*"
+
+"@types/tough-cookie@*", "@types/tough-cookie@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.0.tgz#fef1904e4668b6e5ecee60c52cc6a078ffa6697d"
   integrity sha512-I99sngh224D0M7XgW1s120zxCt3VYQ3IQsuw3P3jbq5GG4yc79+ZjyKznyOGIQrflfylLgcfekeZW/vk0yng6A==

@@ -29,6 +29,7 @@
   "devDependencies": {
     "@types/express": "^4.17.11",
     "@types/node": "^14.14.37",
-    "@types/tough-cookie": "^4.0.0"
+    "@types/tough-cookie": "^4.0.0",
+    "@types/tough-cookie-file-store": "^2.0.1"
   }
 }

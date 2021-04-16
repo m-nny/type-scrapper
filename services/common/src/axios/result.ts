@@ -53,6 +53,7 @@ export const getResultErrorCode = (status: number | undefined): ResultErrorCode 
 };
 
 export const throwIfError = <D, P>(result: Result<D, P>): D => {
+    console.log(result);
     if (isResultError(result)) {
         throw new ResultError2(result);
     }
@@ -75,7 +76,7 @@ export const makeResultErrorOnReject = ({ code, message }: MakeResultErrorOnReje
     if (isNumber(error?.response?.statusCode)) {
         code = code ?? getResultErrorCode(error.response.statusCode);
     }
-    console.log('makeResultErrorOnReject', error?.code, error?.response?.statusCode);
+    // console.log('makeResultErrorOnReject', error?.code, error?.response?.statusCode, error);
     return makeResultError(code ?? 'UNKNOWN', message ?? 'unknown error happened', { error });
 };
 export class ResultError2<P> extends Error {

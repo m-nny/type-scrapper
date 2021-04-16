@@ -1,3 +1,4 @@
+import { AppLogger } from '@m-nny/common';
 import { AsyncOkResult, isResultError, okResult, throwIfError } from '@m-nny/common/dist/axios';
 import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
@@ -7,8 +8,10 @@ import './types/modules';
 
 const runExpress = async (container: DependencyContainer): AsyncOkResult => {
     const { config } = container.resolve(ConfigWrapper);
+    const logger = container.resolve(AppLogger);
     const isInitialized = await initializeServices(container);
     if (isResultError(isInitialized)) {
+        logger.error(isInitialized, 'initialization error');
         return isInitialized;
     }
     const app = await createExpressApp(container);
