@@ -1,6 +1,12 @@
 import { AsyncResult, makeResultErrorOnReject } from '@m-nny/common/dist/axios';
 import Instagram from 'instagram-web-api';
-import { TInstagramConstructorArgs, TInstagramCredentials, TInstagramLoginOptions, TInstagramProfile } from './types';
+import {
+    TInstagramConstructorArgs,
+    TInstagramCredentials,
+    TInstagramGetUserByUsername,
+    TInstagramLoginOptions,
+    TInstagramProfile, TInstagramUser
+} from './types';
 
 export class InstagramClient {
     private client;
@@ -15,5 +21,8 @@ export class InstagramClient {
     }
     public getProfile(): AsyncResult<TInstagramProfile> {
         return this.client.getProfile();
+    }
+    public getUserByUsername({ username }: TInstagramGetUserByUsername): AsyncResult<TInstagramUser> {
+        return this.client.getUserByUsername({ username });
     }
 }

@@ -1,3 +1,3 @@
-import { instagramResolvers } from './instagram/profile';
+import { instagramResolvers } from './instagram';
 
 export const resolvers = [...instagramResolvers] as const;

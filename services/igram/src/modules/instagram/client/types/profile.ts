@@ -1,9 +1,3 @@
-import { CookieJar } from 'tough-cookie';
-
-export type TInstagramCredentials = {
-    username: string;
-    password: string;
-};
 
 export type TInstagramProfileEditParams = {
     should_show_confirmation_dialog: boolean;
@@ -30,12 +24,4 @@ export type TInstagramProfile = {
     usertag_review_enabled: boolean;
     custom_gender: string;
     profile_edit_params?: Record<string, TInstagramProfileEditParams>;
-};
-
-export type TInstagramConstructorArgs = TInstagramCredentials & {
-    cookieStore?: CookieJar;
-};
-
-export type TInstagramLoginOptions = {
-    _sharedData?: boolean;
 };
