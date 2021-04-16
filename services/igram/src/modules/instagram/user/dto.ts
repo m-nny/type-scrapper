@@ -1,6 +1,5 @@
-import { IsOptional, IsString, Min } from 'class-validator';
-import { ArgsType, Field, Int, ObjectType } from 'type-graphql';
-import { TInstagramFollower, TInstagramFollowers, TInstagramPagination, TInstagramUser } from '../client/types';
+import { Field, ObjectType } from 'type-graphql';
+import { TInstagramFollower, TInstagramFollowers, TInstagramUser } from '../client/types';
 import { InstagramPageInfo } from '../common/dto';
 
 export type TPartialInstagramUser = Partial<TInstagramUser>;
@@ -42,3 +41,8 @@ export class InstagramFollowers implements TInstagramFollowers {
     @Field(() => [InstagramFollower])
     public data!: InstagramFollower[];
 }
+
+@ObjectType()
+export class InstagramFollowing extends InstagramFollower {}
+@ObjectType()
+export class InstagramFollowings extends InstagramFollowers {}

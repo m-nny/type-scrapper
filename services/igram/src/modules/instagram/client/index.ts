@@ -5,6 +5,7 @@ import moment from 'moment';
 import {
     TInstagramConstructorArgs,
     TInstagramCredentials,
+    TInstagramFollowings,
     TInstagramLoginOptions,
     TInstagramPagination,
     TInstagramProfile,
@@ -33,6 +34,9 @@ export class InstagramClient {
     }
     public getFollowers(args: TInstagramUserId & TInstagramPagination): AsyncResult<TInstagramFollowers> {
         return this.requestHelper(() => this.client.getFollowers(args), 'getFollowers');
+    }
+    public getFollowings(args: TInstagramUserId & TInstagramPagination): AsyncResult<TInstagramFollowings> {
+        return this.requestHelper(() => this.client.getFollowings(args), 'getFollowings');
     }
 
     private async requestHelper<T>(callback: () => AsyncResult<T>, name = 'anonymous'): AsyncResult<T> {

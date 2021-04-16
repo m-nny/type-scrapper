@@ -53,7 +53,7 @@ export const getResultErrorCode = (status: number | undefined): ResultErrorCode 
 };
 
 export const throwIfError = <D, P>(result: Result<D, P>): D => {
-    console.log(result);
+    // console.log(result);
     if (isResultError(result)) {
         throw new ResultError2(result);
     }
