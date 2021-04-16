@@ -1,6 +1,6 @@
 import { AppLogger, makeLogger } from '@m-nny/common';
 import { AsyncOkResult, isResultError, okResult } from '@m-nny/common/dist/axios';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, Config as ApolloConfig } from 'apollo-server-express';
 import express from 'express';
 import path from 'path';
 import { Store } from 'tough-cookie';
@@ -21,6 +21,13 @@ const makeCookieStore = (config: PlainConfig, logger: AppLogger): Store | undefi
 
     logger.info({ cookieFilepath }, `Using cookie store`);
     return cookieJarStore;
+};
+
+const makeApolloOptions = (config: PlainConfig): ApolloConfig => {
+    let { enabled, ...cacheControl } = config.apollo.cacheControl;
+    return {
+        cacheControl: enabled ? cacheControl : undefined,
+    };
 };
 
 export const configureContainer = async (configOverride?: PartialConfig) => {
@@ -44,6 +51,7 @@ export const createExpressApp = async (container: DependencyContainer) => {
     });
     const apolloServer = new ApolloServer({
         schema,
+        ...makeApolloOptions(config),
     });
     const app = express();
     apolloServer.applyMiddleware({ app });

@@ -6,7 +6,7 @@ export const defaultConfig = configUtils.createConfig({
     port: configUtils.number(3003),
     rootPrefix: configUtils.string(''),
     logger: {
-        ...defaultLoggerOptions
+        ...defaultLoggerOptions,
     },
     cors: {
         origin: configUtils.string.array(['*']),
@@ -20,6 +20,12 @@ export const defaultConfig = configUtils.createConfig({
         cookie: {
             disabled: configUtils.boolean(false),
             path: configUtils.string('../../data/cookies/instagram.json'),
+        },
+    },
+    apollo: {
+        cacheControl: {
+            enabled: configUtils.boolean(true),
+            defaultMaxAge: configUtils.number(5),
         },
     },
 });

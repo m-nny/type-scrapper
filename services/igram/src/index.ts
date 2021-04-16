@@ -1,4 +1,5 @@
 import { AppLogger } from '@m-nny/common';
+import 'apollo-cache-control';
 import { AsyncOkResult, isResultError, okResult, throwIfError } from '@m-nny/common/dist/axios';
 import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';

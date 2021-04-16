@@ -1,4 +1,4 @@
-import { IsOptional, IsString, Min } from 'class-validator';
+import { IsOptional, IsString, Max, Min } from 'class-validator';
 import { ArgsType, Field, InputType, Int, ObjectType } from 'type-graphql';
 import { TInstagramPageInfo, TInstagramPagination } from '../client/types';
 
@@ -23,6 +23,7 @@ export class InstagramPaginationArgs implements TInstagramPagination {
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @Min(0)
+    @Max(50)
     first?: number;
 
     @Field({ nullable: true })

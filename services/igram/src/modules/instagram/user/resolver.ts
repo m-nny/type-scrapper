@@ -4,7 +4,7 @@ import { Arg, Args, FieldResolver, Query, Resolver, Root } from 'type-graphql';
 import { InstagramClient } from '../client';
 import { TInstagramFollowers, TInstagramFollowings, TInstagramUser } from '../client/types';
 import { InstagramPaginationArgs } from '../common/dto';
-import { InstagramFollowers,  InstagramFollowings,  InstagramUser } from './dto';
+import { InstagramFollowers, InstagramFollowings, InstagramUser } from './dto';
 
 @singleton()
 @Resolver(InstagramUser)

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { TInstagramFollower, TInstagramFollowers, TInstagramUser } from '../client/types';
 import { InstagramPageInfo } from '../common/dto';
 
@@ -12,6 +12,10 @@ export class InstagramUser implements TPartialInstagramUser {
     public id!: string;
     @Field()
     public username!: string;
+    @Field()
+    public profile_pic_url!: string;
+    @Field()
+    public profile_pic_url_hd!: string;
 }
 
 @ObjectType()
@@ -40,6 +44,10 @@ export class InstagramFollowers implements TInstagramFollowers {
     public page_info!: InstagramPageInfo;
     @Field(() => [InstagramFollower])
     public data!: InstagramFollower[];
+    @Field(() => Int)
+    public data_length(): number {
+        return this.data.length;
+    }
 }
 
 @ObjectType()
