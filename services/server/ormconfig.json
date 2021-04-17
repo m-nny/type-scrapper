@@ -7,7 +7,7 @@
   "database": "scrapper",
   "synchronize": true,
   "logging": true,
-  "entities": ["src/modules/**/*Entity.ts"],
+  "entities": ["src/modules/**/.ts", "src/modules/instagram/image/InstagramImage.ts", "src/modules/instagram/user/InstagramUser.ts"],
   "migrations": ["src/modules/migrations/*.ts"],
   "cli": {
     "migrationsDir": "src/modules/migrations"

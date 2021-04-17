@@ -1,0 +1,5 @@
+mutation createInstagramUser($user: InstagramUserInput!) {
+    createInstagramUser(newItem: $user) {
+        username
+    }
+}

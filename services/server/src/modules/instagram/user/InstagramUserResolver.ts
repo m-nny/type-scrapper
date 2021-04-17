@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 import { Arg, Args, Mutation, Query, Resolver } from 'type-graphql';
 import { ListPageArgs } from '../../common/dto';
-import { CreateInstagramUserInput, InstagramUserKeyDTO } from './dto';
+import { InstagramUserInput, InstagramUserKeyDTO } from './dto';
 import { InstagramUserNotFoundError } from './errors';
 import { InstagramUser, InstagramUserList } from './InstagramUser';
 import { InstagramUserService } from './InstagramUserService';
@@ -23,7 +23,7 @@ export class InstagramUserResolver {
         return this.instagramUserService.getCouple(page);
     }
     @Mutation(() => InstagramUser)
-    public async createInstagramUser(@Arg('newItem') item: CreateInstagramUserInput): Promise<InstagramUser> {
+    public async createInstagramUser(@Arg('newItem') item: InstagramUserInput): Promise<InstagramUser> {
         return this.instagramUserService.create(item);
     }
 }

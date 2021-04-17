@@ -41,6 +41,15 @@ services:
     env_file: .env.common
     ports: 
       - 3002:3002
+  igram:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.microservice
+      args:
+        microservice: igram 
+    env_file: .env.common
+    ports: 
+      - 3003:3003
 
 volumes:
   # Postgres' data

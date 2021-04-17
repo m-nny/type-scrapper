@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, Repository } from 'typeorm';
 import { ListPage } from '../../common/dto';
 import { TListPageResult } from '../../common/type';
@@ -7,9 +7,13 @@ import { InstagramImage } from '../image/InstagramImage';
 @ObjectType()
 @Entity()
 export class InstagramUser {
-    @Field()
+    @Field(() => ID)
     @PrimaryColumn()
     public username!: string;
+
+    @Field(() => ID)
+    @Column({ unique: true })
+    public id!: string;
 
     @Field()
     @Column()

@@ -1,19 +1,22 @@
 import 'reflect-metadata';
-import { AppLogger } from '@m-nny/common';
-import { DependencyContainer } from 'tsyringe';
 import { configureContainer } from './app';
-import { ImportInstagramUserWorker } from './modules/ImportInstagramUser/worker';
-
-const runWorker = async (container: DependencyContainer) => {
-    const logger = container.resolve(AppLogger);
-    const worker = container.resolve(ImportInstagramUserWorker);
-    await worker.waitUntilReady();
-    logger.info('Worker is ready');
-};
+import { ConfigWrapper } from './config';
+import { runScheduler } from './modules/queue/scheduler';
+import { runWorker } from './modules/queue/worker';
 
 const runApp = async () => {
     const container = await configureContainer();
-    return runWorker(container);
+    const { config } = container.resolve(ConfigWrapper);
+    const role = config.queue.role;
+    let worker;
+    if (role === 'worker' || role === 'both') {
+        worker = await runWorker(container);
+    }
+    let scheduler;
+    if (role === 'scheduler' || role === 'both') {
+        scheduler = await runScheduler(container);
+    }
+    return [worker, scheduler] as const;
 };
 
 runApp();

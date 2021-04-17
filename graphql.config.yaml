@@ -1,0 +1,11 @@
+#  .graphql.config.yml
+projects:
+  brain:
+    schema: 'http://localhost:3001/graphql'
+    documents: services/worker/src/modules/brain/graphql/*.graphql
+  queue:
+    schema: 'http://localhost:3002/graphql'
+    documents: services/worker/src/modules/queue/graphql/*.graphql
+  igram:
+    schema: 'http://localhost:3003/graphql'
+    documents: services/worker/src/modules/instagram/graphql/*.graphql

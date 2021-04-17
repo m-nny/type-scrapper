@@ -1,4 +1,4 @@
-import { IsString, IsUrl } from 'class-validator';
+import { IsNumberString, IsString, IsUrl } from 'class-validator';
 import { ArgsType, Field, InputType } from 'type-graphql';
 import { InstagramUserCreateArg, InstagramUserKey } from './InstagramUser';
 
@@ -9,7 +9,10 @@ export class InstagramUserKeyDTO implements InstagramUserKey {
 }
 
 @InputType()
-export class CreateInstagramUserInput implements InstagramUserCreateArg {
+export class InstagramUserInput implements InstagramUserCreateArg {
+    @Field()
+    @IsNumberString()
+    public id!: string;
     @Field()
     @IsString()
     public username!: string;

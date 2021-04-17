@@ -15,6 +15,19 @@ export const defaultConfig = configUtils.createConfig({
         names: {
             importInstagramUser: configUtils.string('import_insta_user'),
         },
+        role: configUtils.string<WorkerRole>('both'),
+    },
+    microservice: {
+        brain: {
+            hostname: configUtils.string('localhost'),
+            port: configUtils.number(3001),
+            endpoint: configUtils.string('/graphql'),
+        },
+        instagram: {
+            hostname: configUtils.string('localhost'),
+            port: configUtils.number(3003),
+            endpoint: configUtils.string('/graphql'),
+        },
     },
 });
 export type ConfigShape = typeof defaultConfig;

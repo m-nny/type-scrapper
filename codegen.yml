@@ -1,0 +1,20 @@
+overwrite: true
+generates:
+  services/worker/src/modules/brain/sdk.ts:
+    schema: 'http://localhost:3001/graphql'
+    documents: services/worker/src/modules/brain/graphql/*.graphql
+    config:
+      skipTypename: true
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
+  services/worker/src/modules/instagram/sdk.ts:
+    schema: 'http://localhost:3003/graphql'
+    documents: services/worker/src/modules/instagram/graphql/*.graphql
+    config:
+      skipTypename: true
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'

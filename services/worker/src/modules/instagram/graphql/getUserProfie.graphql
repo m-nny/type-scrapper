@@ -1,0 +1,8 @@
+# Write your query or mutation here
+query getProfile($username: String!) {
+    user(username: $username) {
+        id
+        username
+        avatarUrl: profile_pic_url_hd
+    }
+}

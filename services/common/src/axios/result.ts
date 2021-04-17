@@ -33,7 +33,14 @@ export type AsyncResult<D, P = unknown> = Promise<Result<D, P>>;
 export type AsyncOkResult = AsyncResult<OkResult>;
 
 export const isResultError = <P>(result: any): result is ResultError<P> => _.isBoolean(result?.__error);
-export const isResultSuccess = <D, P>(result: Result<D, P>): result is Result<D, P> => !isResultError(result);
+export const isResultSuccess = <D, P>(result: Result<D, P>): result is D => !isResultError(result);
+
+export const ifResultSuccess = <P, D, T>(callback: (arg: P) => T) => (result: Result<P, D>): Result<T, D> => {
+    if (isResultSuccess(result)) {
+        return callback(result);
+    }
+    return result;
+};
 
 export const makeResultError = <P>(
     code: ResultErrorCode,
