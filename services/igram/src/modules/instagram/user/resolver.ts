@@ -1,6 +1,7 @@
 import { throwIfError } from '@m-nny/common/dist/axios';
 import { singleton } from 'tsyringe';
 import { Arg, Args, FieldResolver, Query, Resolver, Root } from 'type-graphql';
+import { CacheControl } from '../../graphql/cacheControl';
 import { InstagramClient } from '../client';
 import { TInstagramFollowers, TInstagramFollowings, TInstagramUser } from '../client/types';
 import { InstagramPaginationArgs } from '../common/dto';
@@ -11,6 +12,7 @@ import { InstagramFollowers, InstagramFollowings, InstagramUser } from './dto';
 export class InstagramUserResolver {
     public constructor(private client: InstagramClient) {}
     @Query(() => InstagramUser)
+    @CacheControl({ maxAge: 10 })
     public async user(@Arg('username') username: string): Promise<TInstagramUser> {
         const user = await this.client.getUserByUsername({ username }).then(throwIfError);
         return user;

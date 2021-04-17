@@ -1,11 +1,11 @@
-import { AppLogger } from '@m-nny/common';
-import 'apollo-cache-control';
-import { AsyncOkResult, isResultError, okResult, throwIfError } from '@m-nny/common/dist/axios';
 import 'reflect-metadata';
+import 'apollo-cache-control';
+import './types/modules';
+import { AppLogger } from '@m-nny/common';
+import { AsyncOkResult, isResultError, okResult, throwIfError } from '@m-nny/common/dist/axios';
 import { DependencyContainer } from 'tsyringe';
 import { configureContainer, createExpressApp, initializeServices } from './app';
 import { ConfigWrapper } from './config';
-import './types/modules';
 
 const runExpress = async (container: DependencyContainer): AsyncOkResult => {
     const { config } = container.resolve(ConfigWrapper);

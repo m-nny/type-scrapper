@@ -1,10 +1,19 @@
 import { CacheHint } from 'apollo-cache-control';
-import { UseMiddleware } from 'type-graphql';
+import { Directive, UseMiddleware } from 'type-graphql';
 
-export function CacheControl(hint: CacheHint) {
-    return UseMiddleware(({ info }, next) => {
-        console.log('Called CacheControl');
-        info.cacheControl.setCacheHint(hint);
-        return next();
-    });
+export function CacheControl({ maxAge, scope }: CacheHint) {
+    if (!maxAge && !scope) {
+        throw new Error('Missing maxAge or scope param for @CacheControl');
+    }
+
+    let sdl = '@cacheControl(';
+    if (maxAge) {
+        sdl += `maxAge: ${maxAge}`;
+    }
+    if (scope) {
+        sdl += ` scope: ${scope}`;
+    }
+    sdl += ')';
+
+    return Directive(sdl);
 }

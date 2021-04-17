@@ -23,7 +23,10 @@ export const defaultConfig = configUtils.createConfig({
         },
     },
     apollo: {
-        cacheControl: configUtils.boolean(true),
+        cacheControl: {
+            enabled: configUtils.boolean(true),
+            defaultMaxAge: configUtils.number(5),
+        },
     },
 });
 export type ConfigShape = typeof defaultConfig;
