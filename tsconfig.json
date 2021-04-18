@@ -2,7 +2,7 @@
   "references": [
     { "path": "services/igram" },
     { "path": "services/queue" },
-    { "path": "services/server" },
+    { "path": "services/brain" },
     { "path": "services/worker" },
   ],
   "files": [],

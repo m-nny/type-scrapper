@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, Repository } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, Repository } from 'typeorm';
 import { ListPage } from '../../common/dto';
 import { TListPageResult } from '../../common/type';
 import { InstagramImage } from '../image/InstagramImage';
@@ -26,6 +26,10 @@ export class InstagramUser {
     @Field(() => [InstagramImage])
     @OneToMany(() => InstagramImage, (image) => image.author)
     public images?: InstagramImage;
+
+    @Field(() => [InstagramUser])
+    @ManyToMany(() => InstagramUser)
+    public follows?: InstagramUser[];
 }
 
 @ObjectType()
