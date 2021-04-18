@@ -14,7 +14,8 @@
     "common": "yarn workspace @app/common",
     "igram": "yarn workspace @app/igram",
     "models": "yarn workspace @app/models",
-    "queue": "yarn workspace @app/queue"
+    "queue": "yarn workspace @app/queue",
+    "worker": "yarn workspace @app/worker"
   },
   "workspaces": [
     "services/**"

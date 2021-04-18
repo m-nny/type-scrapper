@@ -25,16 +25,26 @@ export type InstagramImage = {
 
 export type InstagramUser = {
   username: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
+  info?: Maybe<InstagramUserInfo>;
+  images: Array<InstagramImage>;
+  follows: Array<InstagramUser>;
+};
+
+export type InstagramUserInfo = {
   id: Scalars['ID'];
   avatarUrl: Scalars['String'];
   importDate: Scalars['DateTime'];
-  images: Array<InstagramImage>;
+};
+
+export type InstagramUserInfoInput = {
+  id: Scalars['String'];
+  avatarUrl: Scalars['String'];
 };
 
 export type InstagramUserInput = {
-  id: Scalars['String'];
   username: Scalars['String'];
-  avatarUrl: Scalars['String'];
+  info?: Maybe<InstagramUserInfoInput>;
 };
 
 export type InstagramUserList = {
@@ -48,6 +58,11 @@ export type ListPage = {
   take: Scalars['Int'];
 };
 
+export type ListPageArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+};
+
 export type Mutation = {
   createInstagramUser: InstagramUser;
   addRecipe: Recipe;
@@ -55,7 +70,7 @@ export type Mutation = {
 
 
 export type MutationCreateInstagramUserArgs = {
-  newItem: InstagramUserInput;
+  data: InstagramUserInput;
 };
 
 
@@ -78,8 +93,8 @@ export type Query = {
 
 
 export type QueryInstagramUsersArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
+  onlyNotImported?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<ListPageArgs>;
 };
 
 
@@ -111,7 +126,7 @@ export type CreateInstagramUserMutation = { createInstagramUser: Pick<InstagramU
 
 export const CreateInstagramUserDocument = gql`
     mutation createInstagramUser($user: InstagramUserInput!) {
-  createInstagramUser(newItem: $user) {
+  createInstagramUser(data: $user) {
     username
   }
 }

@@ -3,9 +3,7 @@ import {
     ImportInstagramUserData,
     ImportInstagramUserJob,
     isImportInstagramUserJob,
-    isResultError,
     JobHandlers,
-    makeResultErrorOnReject,
     okResult,
     throwIfError,
     unimplementedErrorFactory,
@@ -15,8 +13,9 @@ import { Job, Processor } from 'bullmq';
 import _ from 'lodash';
 import { singleton } from 'tsyringe';
 import { BrainMicroservice } from '../brain/BrainService';
+import { CreateInstagramUserMutationVariables } from '../brain/sdk';
 import { InstagramMicroservice } from '../instagram/InstagramService';
-import { GetFollowersQuery } from '../instagram/sdk';
+import { GetFollowersQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
 
 type ImportInstagramUserJobHandlers = JobHandlers<ImportInstagramUserJob, Job<ImportInstagramUserData>>;
@@ -56,16 +55,9 @@ export class ImportInstagramUserProcessor {
         getUserProfile: async (job) => {
             const { data } = job;
             this.logger.info(data, `importing instagram user @${data.username}`);
-            const instagramProfile = await this.instagramSdk.getProfile(data).catch(makeResultErrorOnReject());
-            if (isResultError(instagramProfile)) {
-                return instagramProfile;
-            }
-            const { user } = instagramProfile;
-            this.logger.info(user, `got user profile`);
-            const brainSaved = await this.brainSdk.createInstagramUser({ user }).catch(makeResultErrorOnReject());
-            if (isResultError(brainSaved)) {
-                return brainSaved;
-            }
+            const instagramProfile = await this.instagramSdk.getProfile(data);
+            this.logger.info(instagramProfile, `got user profile`);
+            const brainSaved = await this.brainSdk.createInstagramUser(makeInstagramUserInput(instagramProfile));
             this.logger.info(brainSaved, `saved user profile`);
 
             await this.queueSdk.addImportUserJob({ jobName: 'getUserFollowers', jobData: data });
@@ -130,3 +122,12 @@ const filterFollowers = ({ followers, ...rest }: GetAllUserFollowersResult) => (
 });
 const filterArray = (array: string[]) =>
     array.length < 5 ? array : { length: array.length, head: array.slice(0, 1)[0], tail: array.slice(-1)[0] };
+
+const makeInstagramUserInput = ({
+    user: { username, ...info },
+}: GetProfileQuery): CreateInstagramUserMutationVariables => ({
+    user: {
+        username,
+        info,
+    },
+});
