@@ -1,8 +1,9 @@
 import { Max, Min } from 'class-validator';
-import { ArgsType, Field, Int, ObjectType } from 'type-graphql';
+import { ArgsType, Field, InputType, Int, ObjectType } from 'type-graphql';
 import { TListPage } from './type';
 
 @ArgsType()
+@InputType()
 export class ListPageArgs implements TListPage {
     @Field(() => Int)
     @Min(0)

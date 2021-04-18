@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryColumn, Repository } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryColumn, Repository } from 'typeorm';
 import { ListPage } from '../../common/dto';
 import { TListPageResult } from '../../common/type';
 import { InstagramImage } from '../image/InstagramImage';
+import { InstagramUserInfo, InstagramUserInfoCreateDTO } from './InstagramUserInfo';
 
 @ObjectType()
 @Entity()
@@ -11,17 +12,14 @@ export class InstagramUser {
     @PrimaryColumn()
     public username!: string;
 
-    @Field(() => ID)
-    @Column({ unique: true })
-    public id!: string;
+    @Field(() => ID, { nullable: true })
+    @Column({ unique: true, nullable: true })
+    public id?: string;
 
-    @Field()
-    @Column()
-    public avatarUrl!: string;
-
-    @Field()
-    @CreateDateColumn({ type: 'timestamptz' })
-    public importDate!: Date;
+    @Field(() => InstagramUserInfo, { nullable: true })
+    @OneToOne(() => InstagramUserInfo, (info) => info.id, { cascade: true, eager: true })
+    @JoinColumn({ name: 'id' })
+    public info?: InstagramUserInfo;
 
     @Field(() => [InstagramImage])
     @OneToMany(() => InstagramImage, (image) => image.author)
@@ -45,4 +43,6 @@ export class InstagramUserList implements TListPageResult<InstagramUser> {
 export type InstagramUserRepository = Repository<InstagramUser>;
 
 export type InstagramUserKey = Pick<InstagramUser, 'username'>;
-export type InstagramUserCreateArg = Omit<InstagramUser, 'images' | 'importDate'>;
+export type InstagramUserCreateDTO = Omit<InstagramUser, 'info' | 'images' | 'follows'> & {
+    info?: InstagramUserInfoCreateDTO;
+};

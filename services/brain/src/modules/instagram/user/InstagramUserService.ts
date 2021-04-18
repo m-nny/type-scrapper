@@ -1,7 +1,8 @@
 import { singleton } from 'tsyringe';
-import { Connection } from 'typeorm';
-import { TListPage, TListPageResult } from '../../common/type';
-import { InstagramUser, InstagramUserCreateArg, InstagramUserKey, InstagramUserRepository } from './InstagramUser';
+import { Connection, IsNull } from 'typeorm';
+import { defaultListPage, TListPageResult } from '../../common/type';
+import { InstagramUser, InstagramUserCreateDTO, InstagramUserKey, InstagramUserRepository } from './InstagramUser';
+import { GetCoupleInstagramUsersArgs } from './types';
 
 @singleton()
 export class InstagramUserService {
@@ -12,11 +13,17 @@ export class InstagramUserService {
     public get(key: InstagramUserKey): Promise<InstagramUser | undefined> {
         return this.repository.findOne(key);
     }
-    public async getCouple(page: TListPage): Promise<TListPageResult<InstagramUser>> {
-        const [items, totalCount] = await this.repository.findAndCount(page);
+    public async getCouple({
+        onlyNotImported = false,
+        page = defaultListPage,
+    }: GetCoupleInstagramUsersArgs): Promise<TListPageResult<InstagramUser>> {
+        const [items, totalCount] = await this.repository.findAndCount({
+            ...page,
+            where: onlyNotImported ? { id: IsNull() } : undefined,
+        });
         return { totalCount, items, askedPage: page };
     }
-    public create(dto: InstagramUserCreateArg): Promise<InstagramUser> {
+    public create(dto: InstagramUserCreateDTO): Promise<InstagramUser> {
         const item = this.repository.create(dto);
         return this.repository.save(item);
     }

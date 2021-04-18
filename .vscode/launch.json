@@ -35,10 +35,10 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "worker",
+      "name": "brain",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["worker", "dev"],
+      "runtimeArgs": ["brain", "dev"],
       "outputCapture": "std",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
       "envFile": "${workspaceFolder}/.env",
