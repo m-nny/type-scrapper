@@ -12,12 +12,13 @@ import { InstagramFollowers, InstagramFollowings, InstagramUser } from './dto';
 export class InstagramUserResolver {
     public constructor(private client: InstagramClient) {}
     @Query(() => InstagramUser)
-    @CacheControl({ maxAge: 10 })
+    @CacheControl({ maxAge: 60 })
     public async user(@Arg('username') username: string): Promise<TInstagramUser> {
         const user = await this.client.getUserByUsername({ username }).then(throwIfError);
         return user;
     }
     @FieldResolver(() => InstagramFollowers)
+    @CacheControl({ maxAge: 60 })
     public async followers(
         @Root() user: InstagramUser,
         @Args() page: InstagramPaginationArgs,

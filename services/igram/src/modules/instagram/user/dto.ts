@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from 'type-graphql';
+import { CacheControl } from '../../graphql/cacheControl';
 import { TInstagramFollower, TInstagramFollowers, TInstagramUser } from '../client/types';
 import { InstagramPageInfo } from '../common/dto';
 
@@ -19,6 +20,7 @@ export class InstagramUser implements TPartialInstagramUser {
 }
 
 @ObjectType()
+@CacheControl({ maxAge: 60 })
 export class InstagramFollower implements TInstagramFollower {
     @Field()
     public id!: string;
@@ -37,10 +39,12 @@ export class InstagramFollower implements TInstagramFollower {
 }
 
 @ObjectType()
+@CacheControl({ maxAge: 60 })
 export class InstagramFollowers implements TInstagramFollowers {
     @Field()
     public count!: number;
     @Field()
+    @CacheControl({ maxAge: 60 })
     public page_info!: InstagramPageInfo;
     @Field(() => [InstagramFollower])
     public data!: InstagramFollower[];

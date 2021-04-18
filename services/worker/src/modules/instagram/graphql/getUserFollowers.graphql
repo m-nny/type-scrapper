@@ -1,0 +1,18 @@
+# Write your query or mutation here
+fragment FullPageInfo on InstagramPageInfo  {
+    has_next_page
+    end_cursor
+}
+query getFollowers ($username:String!, $cursor:String) {
+  user(username: $username) {
+    followers(first: 50, after: $cursor){
+      count
+      page_info {
+          ...FullPageInfo
+      }
+      data {
+        username
+      }
+    }
+  }
+}
