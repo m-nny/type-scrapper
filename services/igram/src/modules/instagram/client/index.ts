@@ -1,5 +1,5 @@
 import { AppLogger } from '@app/common';
-import { AsyncResult, makeResultErrorOnReject } from '@app/common/dist/axios';
+import { AsyncResult, makeResultErrorOnReject } from '@app/models';
 import Instagram from 'instagram-web-api';
 import moment from 'moment';
 import {
@@ -11,7 +11,7 @@ import {
     TInstagramProfile,
     TInstagramUser,
     TInstagramUserId,
-    TInstagramUsername
+    TInstagramUsername,
 } from './types';
 import { TInstagramFollowers } from './types/followers';
 

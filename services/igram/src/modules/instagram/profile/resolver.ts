@@ -1,4 +1,4 @@
-import { throwIfError } from '@app/common/dist/axios';
+import { throwIfError } from '@app/models';
 import { singleton } from 'tsyringe';
 import { Query, Resolver } from 'type-graphql';
 import { InstagramClient } from '../client';

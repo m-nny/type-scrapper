@@ -7,13 +7,14 @@
   "scripts": {
     "build": "tsc --build",
     "build:clean": "rimraf services/**/dist && yarn build",
+    "codegen": "graphql-codegen --config codegen.yml",
     "---workspaces---": "",
     "common": "yarn workspace @app/common",
     "igram": "yarn workspace @app/igram",
+    "models": "yarn workspace @app/models",
     "queue": "yarn workspace @app/queue",
     "server": "yarn workspace @app/server",
-    "worker": "yarn workspace @app/worker",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "worker": "yarn workspace @app/worker"
   },
   "workspaces": [
     "services/**"

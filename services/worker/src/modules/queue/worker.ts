@@ -1,18 +1,18 @@
 import { AppLogger } from '@app/common';
+import { Worker } from 'bullmq';
 import { DependencyContainer } from 'tsyringe';
-import { ImportInstagramUserWorker } from '../ImportInstagramUser/worker';
+import { importInstagramUserWorkerFactory } from '../ImportInstagramUser/worker';
 
 export const runWorker = async (container: DependencyContainer) => {
     const logger = container.resolve(AppLogger);
-    const worker = container.resolve(ImportInstagramUserWorker);
+    const [worker, queueName] = importInstagramUserWorkerFactory(container);
     await worker.waitUntilReady();
-    const queueName = worker.queueName;
     logger.info({ queueName }, `Running worker on ${queueName}`);
-    container.register(ImportInstagramUserWorker, { useValue: worker });
+    container.register(Worker, { useValue: worker });
     return worker;
 };
 
 export const shutDownWorker = async (container: DependencyContainer) => {
-    const worker = container.resolve(ImportInstagramUserWorker);
+    const worker = container.resolve(Worker);
     await worker.close();
 };

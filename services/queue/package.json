@@ -9,8 +9,8 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@app/models": "0.0.0",
     "@app/common": "0.0.0",
+    "@app/models": "0.0.0",
     "apollo-server": "^2.22.2",
     "apollo-server-express": "^2.22.2",
     "body-parser": "^1.19.0",

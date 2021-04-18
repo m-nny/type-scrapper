@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import 'apollo-cache-control';
 import './types/modules';
 import { AppLogger } from '@app/common';
-import { AsyncOkResult, isResultError, okResult, throwIfError } from '@app/common/dist/axios';
+import { AsyncOkResult, isResultError, okResult, throwIfError } from '@app/models';
 import { DependencyContainer } from 'tsyringe';
 import { configureContainer, createExpressApp, initializeServices } from './app';
 import { ConfigWrapper } from './config';

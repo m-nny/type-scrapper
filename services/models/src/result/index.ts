@@ -42,10 +42,12 @@ export const ifResultSuccess = <P, D, T>(callback: (arg: P) => T) => (result: Re
     return result;
 };
 
+type MakeResultErrorData<P> = Pick<ResultError<P>, 'payload' | 'error' | 'retries'>;
+
 export const makeResultError = <P>(
     code: ResultErrorCode,
     message: string,
-    data: Pick<ResultError<P>, 'payload' | 'error' | 'retries'>,
+    data: MakeResultErrorData<P>,
 ): ResultError<P> => ({ __error: true, code, message, ...data });
 
 export const getResultErrorCode = (status: number | undefined): ResultErrorCode => {
@@ -91,3 +93,8 @@ export class ResultError2<P> extends Error {
         super(error.message);
     }
 }
+
+export const unimplementedErrorFactory = <P = unknown>(
+    functionName: string,
+    options: MakeResultErrorData<P> = {},
+): ResultError<P> => makeResultError('INTERNAL_ERROR', `function ${functionName} is not implemented yet`, options);

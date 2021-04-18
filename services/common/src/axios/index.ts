@@ -1,6 +1,6 @@
+import { AsyncResult, getResultErrorCode, makeResultError, ResultError } from '@app/models';
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { RetryArgs } from '../utils';
-import { AsyncResult, getResultErrorCode, makeResultError, ResultError } from './result';
 import { retryAsyncResult } from './retry';
 
 export const axiosRequest = <T, E>(axios: AxiosInstance, config: AxiosRequestConfig): AsyncResult<T, E> =>
@@ -15,7 +15,7 @@ export const axiosRequestWithRetry = async <T, D = unknown>(
     retryArgs: RetryArgs,
 ): AsyncResult<T, D> => retryAsyncResult(() => axiosRequest(axios, config), retryArgs);
 
-const makeAxiosRequestWithRetry = (defaultConfig: AxiosRequestConfig, retryArgs: RetryArgs) => {
+export const makeAxiosRequestWithRetry = (defaultConfig: AxiosRequestConfig, retryArgs: RetryArgs) => {
     const axios = Axios.create(defaultConfig);
     return <T, P = unknown>(requestConfig: AxiosRequestConfig) =>
         axiosRequestWithRetry<T, P>(axios, requestConfig, retryArgs);
@@ -34,5 +34,3 @@ export const makeAxiosResultError = <E>(error: any): ResultError<E> => {
     }
     return makeResultError<E>('UNKNOWN', 'Unknown axios error happened', { error });
 };
-
-export * from './result';

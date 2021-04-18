@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@app/common": "0.0.0",
+    "@app/models": "0.0.0",
     "bull-board": "^1.5.1",
     "bullmq": "^1.16.2",
     "express": "^4.17.1",

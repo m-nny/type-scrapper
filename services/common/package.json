@@ -8,6 +8,7 @@
     "build": "tsc --build"
   },
   "dependencies": {
+    "@app/models": "^0.0.0",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "flat": "^5.0.2",

@@ -35,3 +35,14 @@ export class AppLogger {
     public info = this.pino.info;
     public debug = this.pino.debug;
 }
+
+let loggerSingleton: AppLogger | null = null;
+export function setAppLogger(logger: AppLogger) {
+    loggerSingleton = logger;
+}
+export function getAppLogger() {
+    if (!loggerSingleton) {
+        throw new Error('AppLogger should be set first');
+    }
+    return loggerSingleton;
+}

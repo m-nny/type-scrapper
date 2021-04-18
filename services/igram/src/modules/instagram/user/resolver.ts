@@ -1,4 +1,4 @@
-import { throwIfError } from '@app/common/dist/axios';
+import { throwIfError } from '@app/models';
 import { singleton } from 'tsyringe';
 import { Arg, Args, FieldResolver, Query, Resolver, Root } from 'type-graphql';
 import { CacheControl } from '../../graphql/cacheControl';

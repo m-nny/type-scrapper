@@ -1,5 +1,5 @@
 import { AppLogger, makeLogger } from '@app/common';
-import { AsyncOkResult, isResultError, okResult } from '@app/common/dist/axios';
+import { AsyncOkResult, isResultError, okResult } from '@app/models';
 import { ApolloServer } from 'apollo-server-express';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
 import express from 'express';
