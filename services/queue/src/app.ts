@@ -1,4 +1,4 @@
-import { AppLogger, makeLogger } from '@m-nny/common';
+import { AppLogger, makeLogger } from '@app/common';
 import { ApolloServer } from 'apollo-server-express';
 import { router } from 'bull-board';
 import express from 'express';

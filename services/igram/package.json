@@ -1,5 +1,5 @@
 {
-  "name": "@m-nny/igram",
+  "name": "@app/igram",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@m-nny/common": "0.0.0",
+    "@app/common": "0.0.0",
     "apollo-server": "^2.22.2",
     "apollo-server-express": "^2.22.2",
     "apollo-server-plugin-response-cache": "^0.7.0",

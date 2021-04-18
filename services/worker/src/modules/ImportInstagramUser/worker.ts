@@ -1,5 +1,5 @@
-import { AppLogger, axios } from '@m-nny/common';
-import { isResultError, okResult, Result } from '@m-nny/common/dist/axios';
+import { AppLogger, axios } from '@app/common';
+import { isResultError, okResult, Result } from '@app/common/dist/axios';
 import { Job, Processor, Worker } from 'bullmq';
 import { singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../config';

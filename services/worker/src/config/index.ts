@@ -1,4 +1,4 @@
-import { configUtils } from '@m-nny/common';
+import { configUtils } from '@app/common';
 import { composeConfig } from './compose';
 import { defaultConfig, PlainConfig } from './default';
 

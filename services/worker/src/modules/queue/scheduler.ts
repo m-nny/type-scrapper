@@ -1,4 +1,4 @@
-import { AppLogger } from '@m-nny/common';
+import { AppLogger } from '@app/common';
 import { QueueScheduler } from 'bullmq';
 import { DependencyContainer } from 'tsyringe';
 import { ConfigWrapper } from '../../config';

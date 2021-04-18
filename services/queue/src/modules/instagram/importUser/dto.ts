@@ -1,6 +1,6 @@
+import { ImportInstagramUserArg } from '@app/models';
 import { IsString } from 'class-validator';
-import { ArgsType, Field, InputType } from 'type-graphql';
-import { ImportInstagramUserArg } from './types';
+import { ArgsType, Field } from 'type-graphql';
 
 @ArgsType()
 export class ImportInstagramUserInput implements ImportInstagramUserArg {

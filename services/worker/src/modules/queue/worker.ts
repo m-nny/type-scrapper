@@ -1,4 +1,4 @@
-import { AppLogger } from '@m-nny/common';
+import { AppLogger } from '@app/common';
 import { DependencyContainer } from 'tsyringe';
 import { ImportInstagramUserWorker } from '../ImportInstagramUser/worker';
 

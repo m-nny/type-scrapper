@@ -1,5 +1,5 @@
 {
-  "name": "@m-nny/queue",
+  "name": "@app/queue",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@m-nny/common": "0.0.0",
+    "@app/models": "0.0.0",
+    "@app/common": "0.0.0",
     "apollo-server": "^2.22.2",
     "apollo-server-express": "^2.22.2",
     "body-parser": "^1.19.0",

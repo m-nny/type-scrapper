@@ -1,5 +1,5 @@
 {
-  "name": "@m-nny/type-scrapper",
+  "name": "@app/type-scrapper",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -8,11 +8,11 @@
     "build": "tsc --build",
     "build:clean": "rimraf services/**/dist && yarn build",
     "---workspaces---": "",
-    "common": "yarn workspace @m-nny/common",
-    "igram": "yarn workspace @m-nny/igram",
-    "queue": "yarn workspace @m-nny/queue",
-    "server": "yarn workspace @m-nny/server",
-    "worker": "yarn workspace @m-nny/worker",
+    "common": "yarn workspace @app/common",
+    "igram": "yarn workspace @app/igram",
+    "queue": "yarn workspace @app/queue",
+    "server": "yarn workspace @app/server",
+    "worker": "yarn workspace @app/worker",
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "workspaces": [

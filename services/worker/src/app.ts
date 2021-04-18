@@ -1,4 +1,4 @@
-import { AppLogger, makeLogger } from '@m-nny/common';
+import { AppLogger, makeLogger } from '@app/common';
 import Redis from 'ioredis';
 import { container as tsyringeContainer } from 'tsyringe';
 import { ConfigWrapper, loadConfig, PartialConfig } from './config';

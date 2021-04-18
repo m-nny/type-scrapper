@@ -1,8 +1,8 @@
+import { ImportInstagramUserArg } from '@app/models';
 import { Queue } from 'bullmq';
 import { singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../../config';
 import { RedisWrapper } from '../../utils/wrappers';
-import { ImportInstagramUserArg } from './types';
 
 @singleton()
 export class ImportInstagramUserQueue {

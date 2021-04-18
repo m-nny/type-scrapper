@@ -1,5 +1,5 @@
 {
-  "name": "@m-nny/worker",
+  "name": "@app/worker",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@m-nny/common": "0.0.0",
+    "@app/common": "0.0.0",
     "bull-board": "^1.5.1",
     "bullmq": "^1.16.2",
     "express": "^4.17.1",

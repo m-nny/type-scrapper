@@ -1,5 +1,5 @@
-import { configUtils } from '@m-nny/common';
-import { AppEnv, PartialConfigShape, PlainConfigShape } from '@m-nny/common/dist/config/types';
+import { configUtils } from '@app/common';
+import { AppEnv, PartialConfigShape, PlainConfigShape } from '@app/common/dist/config/types';
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { AppLogger } from '@m-nny/common';
+import { AppLogger } from '@app/common';
 import { DependencyContainer } from 'tsyringe';
 import { configureContainer, createExpressApp } from './app';
 import { ConfigWrapper } from './config';

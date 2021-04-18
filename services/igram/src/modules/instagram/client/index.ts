@@ -1,5 +1,5 @@
-import { AppLogger } from '@m-nny/common';
-import { AsyncResult, makeResultErrorOnReject } from '@m-nny/common/dist/axios';
+import { AppLogger } from '@app/common';
+import { AsyncResult, makeResultErrorOnReject } from '@app/common/dist/axios';
 import Instagram from 'instagram-web-api';
 import moment from 'moment';
 import {

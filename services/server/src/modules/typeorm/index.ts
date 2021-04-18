@@ -1,4 +1,4 @@
-import { utils } from '@m-nny/common';
+import { utils } from '@app/common';
 import { TlsOptions } from 'tls';
 import { Connection, createConnection } from 'typeorm';
 import { PlainConfig } from '../../config';

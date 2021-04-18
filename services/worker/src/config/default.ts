@@ -1,5 +1,5 @@
-import { configUtils, defaultLoggerOptions } from '@m-nny/common';
-import { AppEnv, PartialConfigShape, PlainConfigShape } from '@m-nny/common/dist/config/types';
+import { configUtils, defaultLoggerOptions } from '@app/common';
+import { AppEnv, PartialConfigShape, PlainConfigShape } from '@app/common/dist/config/types';
 import { WorkerRole } from '../modules/common/types';
 
 export const defaultConfig = configUtils.createConfig({

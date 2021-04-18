@@ -1,4 +1,4 @@
-import { utils } from '@m-nny/common';
+import { utils } from '@app/common';
 import { GraphQLClient } from 'graphql-request';
 import { singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../config';
