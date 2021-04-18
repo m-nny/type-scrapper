@@ -27,6 +27,7 @@ export class ImportInstagramUserWorker {
         this.brainSdk = brainService.sdk;
     }
     public waitUntilReady = () => this.worker.waitUntilReady();
+    public close = () => this.worker.close();
     private jobProcessor: Processor<ImportInstagramUserData> = async (job) => {
         const { data } = job;
         this.logger.debug(job, `Running job #${job.id ?? 0}`);

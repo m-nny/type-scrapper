@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package.json .
 COPY yarn.lock .
+COPY services/models/package.json ./services/models/package.json
 COPY services/common/package.json ./services/common/package.json
 ARG microservice
 RUN test -n "${microservice}" && echo "Building ${microservice}"
@@ -12,6 +13,7 @@ COPY services/${microservice}/package.json ./services/${microservice}/package.js
 RUN yarn install --pure-lockfile --non-interactive --silent && yarn cache clean
 
 COPY tsconfig.packages.json .
+COPY services/models ./services/models/
 COPY services/common ./services/common/
 COPY services/${microservice} ./services/${microservice}/
 
@@ -28,10 +30,12 @@ COPY yarn.lock .
 ARG microservice
 RUN test -n "${microservice}" && echo "Building ${microservice}"
 ENV NODE_ENV=production
+COPY --from=build /app/services/models/package.json /app/services/models/package.json
 COPY --from=build /app/services/common/package.json /app/services/common/package.json
 COPY --from=build /app/services/${microservice}/package.json /app/services/${microservice}/package.json
 RUN yarn install --pure-lockfile --non-interactive --production --silent && yarn cache clean
 
+COPY --from=build /app/services/models/dist /app/services/models/dist
 COPY --from=build /app/services/common/dist /app/services/common/dist
 COPY --from=build /app/services/${microservice}/dist /app/services/${microservice}/dist
 

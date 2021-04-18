@@ -10,5 +10,11 @@ export const runScheduler = async (container: DependencyContainer) => {
     const scheduler = new QueueScheduler(queueName);
     await scheduler.waitUntilReady();
     logger.info({ queueName }, `Running scheduler on ${queueName}`);
+    container.register(QueueScheduler, { useValue: scheduler });
     return scheduler;
+};
+
+export const shutDownScheduler = async (container: DependencyContainer) => {
+    const scheduler = container.resolve(QueueScheduler);
+    await scheduler.close();
 };

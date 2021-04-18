@@ -1,10 +1,18 @@
+import { QueueScheduler } from 'bullmq';
 import 'reflect-metadata';
-import { configureContainer } from './app';
+import { container, DependencyContainer } from 'tsyringe';
+import { configureContainer, configureShutdown } from './app';
 import { ConfigWrapper } from './config';
-import { runScheduler } from './modules/queue/scheduler';
-import { runWorker } from './modules/queue/worker';
+import { ImportInstagramUserWorker } from './modules/ImportInstagramUser/worker';
+import { runScheduler, shutDownScheduler } from './modules/queue/scheduler';
+import { runWorker, shutDownWorker } from './modules/queue/worker';
 
-const runApp = async () => {
+type Args = {
+    container: DependencyContainer;
+    worker: ImportInstagramUserWorker | undefined;
+    scheduler: QueueScheduler | undefined;
+};
+const runApp = async (): Promise<Args> => {
     const container = await configureContainer();
     const { config } = container.resolve(ConfigWrapper);
     const role = config.queue.role;
@@ -16,7 +24,20 @@ const runApp = async () => {
     if (role === 'scheduler' || role === 'both') {
         scheduler = await runScheduler(container);
     }
-    return [worker, scheduler] as const;
+    return { container, worker, scheduler };
 };
 
-runApp();
+const handleShutdown = async (args: Args) => {
+    const { worker, scheduler } = args;
+    configureShutdown(container, () => {
+        if (worker) {
+            shutDownWorker(container);
+        }
+        if (scheduler) {
+            shutDownScheduler(container);
+        }
+    });
+    return args;
+};
+
+runApp().then(handleShutdown);

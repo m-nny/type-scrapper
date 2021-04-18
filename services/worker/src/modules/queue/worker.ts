@@ -8,5 +8,11 @@ export const runWorker = async (container: DependencyContainer) => {
     await worker.waitUntilReady();
     const queueName = worker.queueName;
     logger.info({ queueName }, `Running worker on ${queueName}`);
+    container.register(ImportInstagramUserWorker, { useValue: worker });
     return worker;
+};
+
+export const shutDownWorker = async (container: DependencyContainer) => {
+    const worker = container.resolve(ImportInstagramUserWorker);
+    await worker.close();
 };
