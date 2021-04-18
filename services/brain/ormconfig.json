@@ -7,7 +7,12 @@
   "database": "scrapper",
   "synchronize": true,
   "logging": true,
-  "entities": ["src/modules/**/.ts", "src/modules/instagram/image/InstagramImage.ts", "src/modules/instagram/user/InstagramUser.ts"],
+  "entities": [
+    "src/modules/**/.ts",
+    "src/modules/instagram/image/InstagramImage.ts",
+    "src/modules/instagram/user/InstagramUser.ts",
+    "src/modules/instagram/user/InstagramUserInfo.ts"
+  ],
   "migrations": ["src/modules/migrations/*.ts"],
   "cli": {
     "migrationsDir": "src/modules/migrations"

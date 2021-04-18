@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
 export class AddUserId1618625699388 implements MigrationInterface {
-    name = 'AddUserId1618625699388'
+    public name = 'AddUserId1618625699388'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "instagram_user" ADD "id" character varying NOT NULL`);
