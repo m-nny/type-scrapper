@@ -9,6 +9,15 @@ generates:
       - 'typescript'
       - 'typescript-operations'
       - 'typescript-graphql-request'
+  services/worker/src/modules/queue/sdk.ts:
+    schema: 'http://localhost:3002/graphql'
+    documents: services/worker/src/modules/queue/graphql/*.graphql
+    config:
+      skipTypename: true
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
   services/worker/src/modules/instagram/sdk.ts:
     schema: 'http://localhost:3003/graphql'
     documents: services/worker/src/modules/instagram/graphql/*.graphql

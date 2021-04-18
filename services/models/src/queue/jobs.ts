@@ -5,7 +5,7 @@ export const importInstagramUserJobs = ['getUserProfile', 'getUserFollowers', 'g
 export type ImportInstagramUserJob = typeof importInstagramUserJobs[number];
 export const isImportInstagramUserJob = isEnumFactory(importInstagramUserJobs);
 
-export type ImportInstagramUserArg = {
+export type ImportInstagramUserData = {
     username: string;
 };
 

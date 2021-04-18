@@ -1,10 +1,20 @@
-import { ImportInstagramUserArg } from '@app/models';
-import { IsString } from 'class-validator';
-import { ArgsType, Field } from 'type-graphql';
+import { ImportInstagramUserData, ImportInstagramUserJob, importInstagramUserJobs } from '@app/models';
+import { IsIn, IsString, ValidateNested } from 'class-validator';
+import { ArgsType, Field, InputType } from 'type-graphql';
 
-@ArgsType()
-export class ImportInstagramUserInput implements ImportInstagramUserArg {
+@InputType()
+export class ImportInstagramUserDataInput implements ImportInstagramUserData {
     @IsString()
     @Field()
     public username!: string;
+}
+
+@ArgsType()
+export class ImportInstagramUserInput {
+    @Field()
+    @ValidateNested()
+    public data!: ImportInstagramUserDataInput;
+    @Field()
+    @IsIn(importInstagramUserJobs)
+    public jobName!: ImportInstagramUserJob;
 }

@@ -12,8 +12,8 @@ export class ImportInstagramUserResolver {
         return 0;
     }
     @Mutation(() => ID)
-    public async importUser(@Args() dto: ImportInstagramUserInput): Promise<string> {
-        const job = await this.queue.queue.add('importUser', dto);
+    public async importUser(@Args() { data, jobName }: ImportInstagramUserInput): Promise<string> {
+        const job = await this.queue.addJob(jobName, data);
         return job.id ?? '-1';
     }
 }

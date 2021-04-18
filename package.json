@@ -8,6 +8,7 @@
     "build": "tsc --build",
     "build:clean": "rimraf services/**/dist && yarn build",
     "codegen": "graphql-codegen --config codegen.yml",
+    "clean": "git clean -xdi -e /.env -e /data",
     "---workspaces---": "",
     "common": "yarn workspace @app/common",
     "igram": "yarn workspace @app/igram",

@@ -2,10 +2,16 @@
 projects:
   brain:
     schema: 'http://localhost:3001/graphql'
-    documents: services/worker/src/modules/brain/graphql/*.graphql
+    documents:
+      - services/worker/src/modules/brain/graphql/*.graphql
+      - services/worker/src/modules/brain/sdk.ts
   queue:
     schema: 'http://localhost:3002/graphql'
-    documents: services/worker/src/modules/queue/graphql/*.graphql
+    documents:
+      - services/worker/src/modules/queue/graphql/*.graphql
+      - services/worker/src/modules/queue/sdk.ts
   igram:
     schema: 'http://localhost:3003/graphql'
-    documents: services/worker/src/modules/instagram/graphql/*.graphql
+    documents:
+      - services/worker/src/modules/instagram/graphql/*.graphql
+      - services/worker/src/modules/instagram/sdk.ts

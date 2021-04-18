@@ -1,0 +1,3 @@
+mutation addImportUserJob($jobName: String!, $jobData:ImportInstagramUserDataInput!) {
+	importUser(jobName:$jobName, data:$jobData)
+}

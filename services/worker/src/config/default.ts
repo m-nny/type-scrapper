@@ -23,6 +23,11 @@ export const defaultConfig = configUtils.createConfig({
             port: configUtils.number(3001),
             endpoint: configUtils.string('/graphql'),
         },
+        queue: {
+            hostname: configUtils.string('localhost'),
+            port: configUtils.number(3002),
+            endpoint: configUtils.string('/graphql'),
+        },
         instagram: {
             hostname: configUtils.string('localhost'),
             port: configUtils.number(3003),
