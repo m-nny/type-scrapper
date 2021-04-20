@@ -28,7 +28,21 @@ export type InstagramUser = {
   id?: Maybe<Scalars['ID']>;
   info?: Maybe<InstagramUserInfo>;
   images: Array<InstagramImage>;
-  follows: Array<InstagramUser>;
+  follows: Array<InstagramUserFollow>;
+  followedBy: Array<InstagramUserFollow>;
+};
+
+export type InstagramUserFollow = {
+  followerUsername: Scalars['ID'];
+  followeeUsername: Scalars['ID'];
+  follower: InstagramUser;
+  followee: InstagramUser;
+};
+
+export type InstagramUserFollowList = {
+  askedPage: ListPage;
+  items: Array<InstagramUserFollow>;
+  totalCount: Scalars['Float'];
 };
 
 export type InstagramUserInfo = {
@@ -64,8 +78,24 @@ export type ListPageArgs = {
 };
 
 export type Mutation = {
+  instagramUserFollowedBy: Scalars['Int'];
+  instagramUserFollowing: Scalars['Int'];
   createInstagramUser: InstagramUser;
   addRecipe: Recipe;
+};
+
+
+export type MutationInstagramUserFollowedByArgs = {
+  username: Scalars['String'];
+  create?: Maybe<Scalars['Boolean']>;
+  followedBy: Array<Scalars['String']>;
+};
+
+
+export type MutationInstagramUserFollowingArgs = {
+  username: Scalars['String'];
+  create?: Maybe<Scalars['Boolean']>;
+  following: Array<Scalars['String']>;
 };
 
 
@@ -85,10 +115,22 @@ export type NewRecipeInput = {
 };
 
 export type Query = {
+  instagramFollows: InstagramUserFollowList;
   instagramUser: InstagramUser;
   instagramUsers: InstagramUserList;
   recipe: Recipe;
   recipes: Array<Recipe>;
+};
+
+
+export type QueryInstagramFollowsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryInstagramUserArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -116,6 +158,14 @@ export type Recipe = {
   ingredients: Array<Scalars['String']>;
 };
 
+export type AddInstagramUserIsFollowingMutationVariables = Exact<{
+  username: Scalars['String'];
+  following: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AddInstagramUserIsFollowingMutation = Pick<Mutation, 'instagramUserFollowing'>;
+
 export type CreateInstagramUserMutationVariables = Exact<{
   user: InstagramUserInput;
 }>;
@@ -124,6 +174,11 @@ export type CreateInstagramUserMutationVariables = Exact<{
 export type CreateInstagramUserMutation = { createInstagramUser: Pick<InstagramUser, 'username'> };
 
 
+export const AddInstagramUserIsFollowingDocument = gql`
+    mutation addInstagramUserIsFollowing($username: String!, $following: [String!]!) {
+  instagramUserFollowing(following: $following, username: $username, create: true)
+}
+    `;
 export const CreateInstagramUserDocument = gql`
     mutation createInstagramUser($user: InstagramUserInput!) {
   createInstagramUser(data: $user) {
@@ -138,6 +193,9 @@ export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    addInstagramUserIsFollowing(variables: AddInstagramUserIsFollowingMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddInstagramUserIsFollowingMutation> {
+      return withWrapper(() => client.request<AddInstagramUserIsFollowingMutation>(AddInstagramUserIsFollowingDocument, variables, requestHeaders));
+    },
     createInstagramUser(variables: CreateInstagramUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstagramUserMutation> {
       return withWrapper(() => client.request<CreateInstagramUserMutation>(CreateInstagramUserDocument, variables, requestHeaders));
     }

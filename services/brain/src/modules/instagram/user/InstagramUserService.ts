@@ -34,4 +34,8 @@ export class InstagramUserService {
         const item = this.repository.create(dto);
         return this.repository.save(item);
     }
+    public createCoupleByUsernames(dto: InstagramUserCreateDTO[]): Promise<InstagramUser[]> {
+        const item = this.repository.create(dto);
+        return this.repository.save(item);
+    }
 }

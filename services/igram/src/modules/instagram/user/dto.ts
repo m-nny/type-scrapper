@@ -20,7 +20,7 @@ export class InstagramUser implements TPartialInstagramUser {
 }
 
 @ObjectType()
-@CacheControl({ maxAge: 60 })
+@CacheControl({ maxAge: 120 })
 export class InstagramFollower implements TInstagramFollower {
     @Field()
     public id!: string;
@@ -39,12 +39,12 @@ export class InstagramFollower implements TInstagramFollower {
 }
 
 @ObjectType()
-@CacheControl({ maxAge: 60 })
+@CacheControl({ maxAge: 120 })
 export class InstagramFollowers implements TInstagramFollowers {
     @Field()
     public count!: number;
     @Field()
-    @CacheControl({ maxAge: 60 })
+    @CacheControl({ maxAge: 120 })
     public page_info!: InstagramPageInfo;
     @Field(() => [InstagramFollower])
     public data!: InstagramFollower[];

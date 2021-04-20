@@ -1,9 +1,11 @@
 import { singleton } from 'tsyringe';
-import { Args, FieldResolver, Query, Resolver, ResolverInterface, Root } from 'type-graphql';
+import { Args, FieldResolver, Int, Mutation, Query, Resolver, ResolverInterface, Root } from 'type-graphql';
 import { ListPageArgs } from '../../../common/dto';
 import { InstagramUserService } from '../InstagramUserService';
+import { InstagramUserFollowedByInput, InstagramUserFollowingInput } from './dto';
 import { InstagramUserFollow, InstagramUserFollowList } from './InstagramUserFollow';
 import { InstagramUserFollowService } from './InstagramUserFollowService';
+import { hydrate } from './utils';
 
 @singleton()
 @Resolver(() => InstagramUserFollow)
@@ -23,5 +25,21 @@ export class InstagramUserFollowResolver implements ResolverInterface<InstagramU
     @FieldResolver()
     public followee(@Root() root: InstagramUserFollow) {
         return this.instagramUserService.getOrFail({ username: root.followeeUsername });
+    }
+    @Mutation(() => Int)
+    public async instagramUserFollowedBy(@Args() args: InstagramUserFollowedByInput): Promise<number> {
+        if (args.create) {
+            await this.instagramUserService.createCouple(hydrate.usernames(args.followedBy));
+        }
+        const follows = await this.instagramUserFollowService.addManyFollowers(args.followedBy, args.username);
+        return follows.length;
+    }
+    @Mutation(() => Int)
+    public async instagramUserFollowing(@Args() args: InstagramUserFollowingInput): Promise<number> {
+        if (args.create) {
+            await this.instagramUserService.createCouple(hydrate.usernames(args.following));
+        }
+        const follows = await this.instagramUserFollowService.addManyFollowees(args.username, args.following);
+        return follows.length;
     }
 }

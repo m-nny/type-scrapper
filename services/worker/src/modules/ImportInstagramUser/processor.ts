@@ -7,13 +7,13 @@ import {
     okResult,
     throwIfError,
     unimplementedErrorFactory,
-    UnknownJobNameError
+    UnknownJobNameError,
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import _ from 'lodash';
 import { singleton } from 'tsyringe';
 import { BrainMicroservice } from '../brain/BrainService';
-import { CreateInstagramUserMutationVariables } from '../brain/sdk';
+import { AddInstagramUserIsFollowingMutationVariables, CreateInstagramUserMutationVariables } from '../brain/sdk';
 import { InstagramMicroservice } from '../instagram/InstagramService';
 import { GetFollowersQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
@@ -65,13 +65,15 @@ export class ImportInstagramUserProcessor {
             return okResult;
         },
         getUserFollowers: async (job) => {
-            const { data } = job;
-            const followers = await this.getAllUserFollowers(data.username);
-            this.logger.debug(filterFollowers(followers), `Got user followers. first batch`);
             return unimplementedErrorFactory('getUserFollowings');
         },
         getUserFollowings: async (job) => {
-            return unimplementedErrorFactory('getUserFollowings');
+            const { data } = job;
+            const followers = await this.getAllUserFollowers(data.username);
+            this.logger.debug(filterFollowers(followers), `Got user followers`);
+            const imported = await this.brainSdk.addInstagramUserIsFollowing(hydrate(data.username, followers));
+            this.logger.info(imported, `saved user followers`);
+            return okResult;
         },
     };
 
@@ -130,4 +132,12 @@ const makeInstagramUserInput = ({
         username,
         info,
     },
+});
+
+const hydrate = (
+    username: string,
+    { followers }: GetAllUserFollowersResult,
+): AddInstagramUserIsFollowingMutationVariables => ({
+    username,
+    following: followers,
 });

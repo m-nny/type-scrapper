@@ -16,12 +16,12 @@ export class InstagramUserFollow {
     public followeeUsername!: string;
 
     @Field(() => InstagramUser)
-    @ManyToOne(() => InstagramUser, (user) => user.followedBy, { primary: true })
+    @ManyToOne(() => InstagramUser, (user) => user.followedBy, { primary: true, cascade: true })
     @JoinColumn({ name: 'followerUsername' })
     public follower!: InstagramUser;
 
     @Field(() => InstagramUser)
-    @ManyToOne(() => InstagramUser, (user) => user.follows, { primary: true })
+    @ManyToOne(() => InstagramUser, (user) => user.follows, { primary: true, cascade: true })
     @JoinColumn({ name: 'followeeUsername' })
     public followee!: InstagramUser;
 }
