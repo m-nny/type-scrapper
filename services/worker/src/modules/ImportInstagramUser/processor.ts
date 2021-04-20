@@ -6,16 +6,20 @@ import {
     JobHandlers,
     okResult,
     throwIfError,
-    unimplementedErrorFactory,
-    UnknownJobNameError,
+
+    UnknownJobNameError
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import _ from 'lodash';
 import { singleton } from 'tsyringe';
 import { BrainMicroservice } from '../brain/BrainService';
-import { AddInstagramUserIsFollowingMutationVariables, CreateInstagramUserMutationVariables } from '../brain/sdk';
+import {
+    AddInstagramUserFollowedByMutationVariables,
+    AddInstagramUserIsFollowingMutationVariables,
+    CreateInstagramUserMutationVariables
+} from '../brain/sdk';
 import { InstagramMicroservice } from '../instagram/InstagramService';
-import { GetFollowersQuery, GetProfileQuery } from '../instagram/sdk';
+import { GetFollowersQuery, GetFollowingsQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
 
 type ImportInstagramUserJobHandlers = JobHandlers<ImportInstagramUserJob, Job<ImportInstagramUserData>>;
@@ -65,16 +69,47 @@ export class ImportInstagramUserProcessor {
             return okResult;
         },
         getUserFollowers: async (job) => {
-            return unimplementedErrorFactory('getUserFollowings');
-        },
-        getUserFollowings: async (job) => {
             const { data } = job;
             const followers = await this.getAllUserFollowers(data.username);
             this.logger.debug(filterFollowers(followers), `Got user followers`);
-            const imported = await this.brainSdk.addInstagramUserIsFollowing(hydrate(data.username, followers));
+            const imported = await this.brainSdk.addInstagramUserFollowedBy(hydrateFollowers(data.username, followers));
             this.logger.info(imported, `saved user followers`);
             return okResult;
         },
+        getUserFollowings: async (job) => {
+            const { data } = job;
+            const followings = await this.getAllUserFollowings(data.username);
+            this.logger.debug(filterFollowings(followings), `Got user followings`);
+            const imported = await this.brainSdk.addInstagramUserIsFollowing(
+                hydrateFollowings(data.username, followings),
+            );
+            this.logger.info(imported, `saved user followings`);
+            return okResult;
+        },
+    };
+
+    private getAllUserFollowings = async (username: string): Promise<GetAllUserFollowingsResult> => {
+        let cursor = undefined;
+        const followings = [];
+        let count = 0;
+        while (true) {
+            const result: GetFollowingsQuery = await this.instagramSdk.getFollowings({ username, cursor });
+            const userFollowings = result.user.followings;
+            const userFollowingsUsername = userFollowings.data.map((user) => user.username);
+            const hasNextPage = userFollowings.page_info.has_next_page;
+            cursor = userFollowings.page_info.end_cursor;
+            count = userFollowings.count;
+
+            followings.push(...userFollowingsUsername);
+            this.logger.debug(
+                filterUserFollowers(userFollowingsUsername),
+                `Got user ${userFollowingsUsername.length} followings. Has nextPage ${hasNextPage}`,
+            );
+            if (!hasNextPage) {
+                break;
+            }
+        }
+        return { count, followings };
     };
 
     private getAllUserFollowers = async (username: string): Promise<GetAllUserFollowersResult> => {
@@ -112,11 +147,19 @@ type GetAllUserFollowersResult = {
     count: number;
     followers: string[];
 };
+type GetAllUserFollowingsResult = {
+    count: number;
+    followings: string[];
+};
 
 const filterJob = (job: Job) => _.pick(job, ['id', 'name', 'data']);
 
 const filterUserFollowers = (followers: string[]) => ({
     followers: filterArray(followers),
+});
+const filterFollowings = ({ followings, ...rest }: GetAllUserFollowingsResult) => ({
+    followings: filterArray(followings),
+    ...rest,
 });
 const filterFollowers = ({ followers, ...rest }: GetAllUserFollowersResult) => ({
     followers: filterArray(followers),
@@ -134,10 +177,17 @@ const makeInstagramUserInput = ({
     },
 });
 
-const hydrate = (
+const hydrateFollowings = (
     username: string,
-    { followers }: GetAllUserFollowersResult,
+    { followings }: GetAllUserFollowingsResult,
 ): AddInstagramUserIsFollowingMutationVariables => ({
     username,
-    following: followers,
+    following: followings,
+});
+const hydrateFollowers = (
+    username: string,
+    { followers }: GetAllUserFollowersResult,
+): AddInstagramUserFollowedByMutationVariables => ({
+    username,
+    followedBy: followers,
 });

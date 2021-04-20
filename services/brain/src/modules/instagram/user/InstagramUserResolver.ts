@@ -37,4 +37,8 @@ export class InstagramUserResolver implements ResolverInterface<InstagramUser> {
     public async follows(@Root() root: InstagramUser) {
         return this.instagramUserFollowService.getUserFollows(root.username);
     }
+    @FieldResolver()
+    public async followedBy(@Root() root: InstagramUser) {
+        return this.instagramUserFollowService.getUserFollowedBy(root.username);
+    }
 }

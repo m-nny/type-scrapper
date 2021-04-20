@@ -1,0 +1,3 @@
+mutation addInstagramUserFollowedBy($username: String!, $followedBy: [String!]!) {
+    instagramUserFollowedBy(followedBy: $followedBy, username: $username, create: true)
+}

@@ -158,6 +158,14 @@ export type Recipe = {
   ingredients: Array<Scalars['String']>;
 };
 
+export type AddInstagramUserFollowedByMutationVariables = Exact<{
+  username: Scalars['String'];
+  followedBy: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type AddInstagramUserFollowedByMutation = Pick<Mutation, 'instagramUserFollowedBy'>;
+
 export type AddInstagramUserIsFollowingMutationVariables = Exact<{
   username: Scalars['String'];
   following: Array<Scalars['String']> | Scalars['String'];
@@ -174,6 +182,15 @@ export type CreateInstagramUserMutationVariables = Exact<{
 export type CreateInstagramUserMutation = { createInstagramUser: Pick<InstagramUser, 'username'> };
 
 
+export const AddInstagramUserFollowedByDocument = gql`
+    mutation addInstagramUserFollowedBy($username: String!, $followedBy: [String!]!) {
+  instagramUserFollowedBy(
+    followedBy: $followedBy
+    username: $username
+    create: true
+  )
+}
+    `;
 export const AddInstagramUserIsFollowingDocument = gql`
     mutation addInstagramUserIsFollowing($username: String!, $following: [String!]!) {
   instagramUserFollowing(following: $following, username: $username, create: true)
@@ -193,6 +210,9 @@ export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    addInstagramUserFollowedBy(variables: AddInstagramUserFollowedByMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddInstagramUserFollowedByMutation> {
+      return withWrapper(() => client.request<AddInstagramUserFollowedByMutation>(AddInstagramUserFollowedByDocument, variables, requestHeaders));
+    },
     addInstagramUserIsFollowing(variables: AddInstagramUserIsFollowingMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddInstagramUserIsFollowingMutation> {
       return withWrapper(() => client.request<AddInstagramUserIsFollowingMutation>(AddInstagramUserIsFollowingDocument, variables, requestHeaders));
     },

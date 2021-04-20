@@ -6,6 +6,7 @@ import { InstagramPageInfo } from '../common/dto';
 export type TPartialInstagramUser = Partial<TInstagramUser>;
 
 @ObjectType()
+@CacheControl({ maxAge: 120 })
 export class InstagramUser implements TPartialInstagramUser {
     @Field()
     public biography!: string;

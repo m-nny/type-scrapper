@@ -34,4 +34,7 @@ export class InstagramUserFollowService {
     public async getUserFollows(username: string): Promise<InstagramUserFollow[]> {
         return await this.repository.find({ where: { followerUsername: username } });
     }
+    public async getUserFollowedBy(username: string): Promise<InstagramUserFollow[]> {
+        return await this.repository.find({ where: { followeeUsername: username } });
+    }
 }
