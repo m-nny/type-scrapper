@@ -13,6 +13,9 @@ export class InstagramUserService {
     public get(key: InstagramUserKey): Promise<InstagramUser | undefined> {
         return this.repository.findOne(key);
     }
+    public getOrFail(key: InstagramUserKey): Promise<InstagramUser> {
+        return this.repository.findOneOrFail(key);
+    }
     public async getCouple({
         onlyNotImported = false,
         page = defaultListPage,
@@ -24,6 +27,10 @@ export class InstagramUserService {
         return { totalCount, items, askedPage: page };
     }
     public create(dto: InstagramUserCreateDTO): Promise<InstagramUser> {
+        const item = this.repository.create(dto);
+        return this.repository.save(item);
+    }
+    public createCouple(dto: InstagramUserCreateDTO[]): Promise<InstagramUser[]> {
         const item = this.repository.create(dto);
         return this.repository.save(item);
     }

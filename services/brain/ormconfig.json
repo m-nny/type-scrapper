@@ -11,6 +11,7 @@
     "src/modules/**/.ts",
     "src/modules/instagram/image/InstagramImage.ts",
     "src/modules/instagram/user/InstagramUser.ts",
+    "src/modules/instagram/user/follow/InstagramUserFollow.ts",
     "src/modules/instagram/user/InstagramUserInfo.ts"
   ],
   "migrations": ["src/modules/migrations/*.ts"],
