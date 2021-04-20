@@ -12,7 +12,6 @@ import { InstagramFollowers, InstagramFollowings, InstagramUser } from './dto';
 export class InstagramUserResolver {
     public constructor(private client: InstagramClient) {}
     @Query(() => InstagramUser)
-    @CacheControl({ maxAge: 10 })
     public async user(@Arg('username') username: string): Promise<TInstagramUser> {
         const user = await this.client.getUserByUsername({ username }).then(throwIfError);
         return user;

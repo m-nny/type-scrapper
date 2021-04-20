@@ -16,17 +16,17 @@ services:
     image: redis:6.2.1-alpine
     ports:
       - 6379:6379
-  server:
+  brain:
     build:
       context: .
       dockerfile: docker/Dockerfile.microservice
       args:
-        microservice: server
+        microservice: brain
     env_file: .env.common
     ports:
       - 3001:3001
     depends_on:
-      - db 
+      - db
   worker:
     build:
       context: .

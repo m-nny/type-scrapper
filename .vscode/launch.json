@@ -31,6 +31,20 @@
       "env": {
         "m_nny_logger_level": "debug"
       }
+    },
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "brain",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["brain", "dev"],
+      "outputCapture": "std",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "m_nny_logger_level": "debug"
+      }
     }
   ]
 }

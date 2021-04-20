@@ -1,0 +1,15 @@
+# Write your query or mutation here
+query getFollowers($username: String!, $cursor: String) {
+    user(username: $username) {
+        followers(first: 50, after: $cursor) {
+            count
+            page_info {
+                has_next_page
+                end_cursor
+            }
+            data {
+                username
+            }
+        }
+    }
+}

@@ -10,11 +10,11 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "clean": "git clean -xdi -e /.env -e /data",
     "---workspaces---": "",
+    "brain": "yarn workspace @app/brain",
     "common": "yarn workspace @app/common",
     "igram": "yarn workspace @app/igram",
     "models": "yarn workspace @app/models",
     "queue": "yarn workspace @app/queue",
-    "server": "yarn workspace @app/server",
     "worker": "yarn workspace @app/worker"
   },
   "workspaces": [

@@ -3,19 +3,23 @@ import {
     ImportInstagramUserData,
     ImportInstagramUserJob,
     isImportInstagramUserJob,
-    isResultError,
     JobHandlers,
-    makeResultErrorOnReject,
     okResult,
     throwIfError,
-    unimplementedErrorFactory,
+
     UnknownJobNameError
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import _ from 'lodash';
 import { singleton } from 'tsyringe';
 import { BrainMicroservice } from '../brain/BrainService';
+import {
+    AddInstagramUserFollowedByMutationVariables,
+    AddInstagramUserIsFollowingMutationVariables,
+    CreateInstagramUserMutationVariables
+} from '../brain/sdk';
 import { InstagramMicroservice } from '../instagram/InstagramService';
+import { GetFollowersQuery, GetFollowingsQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
 
 type ImportInstagramUserJobHandlers = JobHandlers<ImportInstagramUserJob, Job<ImportInstagramUserData>>;
@@ -55,16 +59,9 @@ export class ImportInstagramUserProcessor {
         getUserProfile: async (job) => {
             const { data } = job;
             this.logger.info(data, `importing instagram user @${data.username}`);
-            const instagramProfile = await this.instagramSdk.getProfile(data).catch(makeResultErrorOnReject());
-            if (isResultError(instagramProfile)) {
-                return instagramProfile;
-            }
-            const { user } = instagramProfile;
-            this.logger.info(user, `got user profile`);
-            const brainSaved = await this.brainSdk.createInstagramUser({ user }).catch(makeResultErrorOnReject());
-            if (isResultError(brainSaved)) {
-                return brainSaved;
-            }
+            const instagramProfile = await this.instagramSdk.getProfile(data);
+            this.logger.info(instagramProfile, `got user profile`);
+            const brainSaved = await this.brainSdk.createInstagramUser(makeInstagramUserInput(instagramProfile));
             this.logger.info(brainSaved, `saved user profile`);
 
             await this.queueSdk.addImportUserJob({ jobName: 'getUserFollowers', jobData: data });
@@ -72,11 +69,71 @@ export class ImportInstagramUserProcessor {
             return okResult;
         },
         getUserFollowers: async (job) => {
-            return unimplementedErrorFactory('getUserFollowers');
+            const { data } = job;
+            const followers = await this.getAllUserFollowers(data.username);
+            this.logger.debug(filterFollowers(followers), `Got user followers`);
+            const imported = await this.brainSdk.addInstagramUserFollowedBy(hydrateFollowers(data.username, followers));
+            this.logger.info(imported, `saved user followers`);
+            return okResult;
         },
         getUserFollowings: async (job) => {
-            return unimplementedErrorFactory('getUserFollowings');
+            const { data } = job;
+            const followings = await this.getAllUserFollowings(data.username);
+            this.logger.debug(filterFollowings(followings), `Got user followings`);
+            const imported = await this.brainSdk.addInstagramUserIsFollowing(
+                hydrateFollowings(data.username, followings),
+            );
+            this.logger.info(imported, `saved user followings`);
+            return okResult;
         },
+    };
+
+    private getAllUserFollowings = async (username: string): Promise<GetAllUserFollowingsResult> => {
+        let cursor = undefined;
+        const followings = [];
+        let count = 0;
+        while (true) {
+            const result: GetFollowingsQuery = await this.instagramSdk.getFollowings({ username, cursor });
+            const userFollowings = result.user.followings;
+            const userFollowingsUsername = userFollowings.data.map((user) => user.username);
+            const hasNextPage = userFollowings.page_info.has_next_page;
+            cursor = userFollowings.page_info.end_cursor;
+            count = userFollowings.count;
+
+            followings.push(...userFollowingsUsername);
+            this.logger.debug(
+                filterUserFollowers(userFollowingsUsername),
+                `Got user ${userFollowingsUsername.length} followings. Has nextPage ${hasNextPage}`,
+            );
+            if (!hasNextPage) {
+                break;
+            }
+        }
+        return { count, followings };
+    };
+
+    private getAllUserFollowers = async (username: string): Promise<GetAllUserFollowersResult> => {
+        let cursor = undefined;
+        const followers = [];
+        let count = 0;
+        while (true) {
+            const result: GetFollowersQuery = await this.instagramSdk.getFollowers({ username, cursor });
+            const userFollowers = result.user.followers;
+            const userFollowersUsername = userFollowers.data.map((user) => user.username);
+            const hasNextPage = userFollowers.page_info.has_next_page;
+            cursor = userFollowers.page_info.end_cursor;
+            count = userFollowers.count;
+
+            followers.push(...userFollowersUsername);
+            this.logger.debug(
+                filterUserFollowers(userFollowersUsername),
+                `Got user ${userFollowersUsername.length} followers. Has nextPage ${hasNextPage}`,
+            );
+            if (!hasNextPage) {
+                break;
+            }
+        }
+        return { count, followers };
     };
 
     private logError<T, D>(job: Job<T>, error: any): D {
@@ -86,4 +143,51 @@ export class ImportInstagramUserProcessor {
     }
 }
 
+type GetAllUserFollowersResult = {
+    count: number;
+    followers: string[];
+};
+type GetAllUserFollowingsResult = {
+    count: number;
+    followings: string[];
+};
+
 const filterJob = (job: Job) => _.pick(job, ['id', 'name', 'data']);
+
+const filterUserFollowers = (followers: string[]) => ({
+    followers: filterArray(followers),
+});
+const filterFollowings = ({ followings, ...rest }: GetAllUserFollowingsResult) => ({
+    followings: filterArray(followings),
+    ...rest,
+});
+const filterFollowers = ({ followers, ...rest }: GetAllUserFollowersResult) => ({
+    followers: filterArray(followers),
+    ...rest,
+});
+const filterArray = (array: string[]) =>
+    array.length < 5 ? array : { length: array.length, head: array.slice(0, 1)[0], tail: array.slice(-1)[0] };
+
+const makeInstagramUserInput = ({
+    user: { username, ...info },
+}: GetProfileQuery): CreateInstagramUserMutationVariables => ({
+    user: {
+        username,
+        info,
+    },
+});
+
+const hydrateFollowings = (
+    username: string,
+    { followings }: GetAllUserFollowingsResult,
+): AddInstagramUserIsFollowingMutationVariables => ({
+    username,
+    following: followings,
+});
+const hydrateFollowers = (
+    username: string,
+    { followers }: GetAllUserFollowersResult,
+): AddInstagramUserFollowedByMutationVariables => ({
+    username,
+    followedBy: followers,
+});

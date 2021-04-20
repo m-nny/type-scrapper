@@ -94,6 +94,28 @@ export type QueryUserArgs = {
   username: Scalars['String'];
 };
 
+export type GetFollowersQueryVariables = Exact<{
+  username: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetFollowersQuery = { user: { followers: (
+      Pick<InstagramFollowers, 'count'>
+      & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
+    ) } };
+
+export type GetFollowingsQueryVariables = Exact<{
+  username: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetFollowingsQuery = { user: { followings: (
+      Pick<InstagramFollowings, 'count'>
+      & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
+    ) } };
+
 export type GetProfileQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -105,6 +127,38 @@ export type GetProfileQuery = { user: (
   ) };
 
 
+export const GetFollowersDocument = gql`
+    query getFollowers($username: String!, $cursor: String) {
+  user(username: $username) {
+    followers(first: 50, after: $cursor) {
+      count
+      page_info {
+        has_next_page
+        end_cursor
+      }
+      data {
+        username
+      }
+    }
+  }
+}
+    `;
+export const GetFollowingsDocument = gql`
+    query getFollowings($username: String!, $cursor: String) {
+  user(username: $username) {
+    followings(first: 50, after: $cursor) {
+      count
+      page_info {
+        has_next_page
+        end_cursor
+      }
+      data {
+        username
+      }
+    }
+  }
+}
+    `;
 export const GetProfileDocument = gql`
     query getProfile($username: String!) {
   user(username: $username) {
@@ -121,6 +175,12 @@ export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    getFollowers(variables: GetFollowersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowersQuery> {
+      return withWrapper(() => client.request<GetFollowersQuery>(GetFollowersDocument, variables, requestHeaders));
+    },
+    getFollowings(variables: GetFollowingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowingsQuery> {
+      return withWrapper(() => client.request<GetFollowingsQuery>(GetFollowingsDocument, variables, requestHeaders));
+    },
     getProfile(variables: GetProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileQuery> {
       return withWrapper(() => client.request<GetProfileQuery>(GetProfileDocument, variables, requestHeaders));
     }
