@@ -1,15 +1,14 @@
-import { configUtils } from '@app/common';
-import { Worker } from 'bullmq';
+import { QueueScheduler, Worker } from 'bullmq';
 import { DependencyContainer } from 'tsyringe';
 import { ConfigWrapper } from '../../config';
 import { RedisWrapper } from '../utils/wrappers';
-import { ImportInstagramUserProcessor } from './processor';
+import { EnqueueJobProcessor } from './processor';
 
-export const importInstagramUserWorkerFactory = (container: DependencyContainer) => {
+export const enqueueImportWorkerFactory = (container: DependencyContainer) => {
     const { config } = container.resolve(ConfigWrapper);
     const { redis } = container.resolve(RedisWrapper);
-    const processorFactory = container.resolve(ImportInstagramUserProcessor);
-    const queueName = config.queue.names.importInstagramUser;
+    const processorFactory = container.resolve(EnqueueJobProcessor);
+    const queueName = config.queue.names.enqueueImport;
     const worker = new Worker(queueName, processorFactory.processor, { ...config.worker, connection: redis });
     return [worker, queueName] as const;
 };

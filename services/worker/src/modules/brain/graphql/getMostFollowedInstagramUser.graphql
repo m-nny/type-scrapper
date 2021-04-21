@@ -1,0 +1,13 @@
+query getMostFollowedInstagramUser($take: Int = 1) {
+  mostFollowedNotImportedUsers(take: $take) {
+    # totalCount
+    # askedPage {
+    #   skip
+    #   take
+    # }
+    items {
+      username
+      followersCount
+    }
+  }
+}

@@ -1,7 +1,7 @@
-import { InstagramUserKey } from '../InstagramUser';
+import { TInstagramUserKey } from '../InstagramUser';
 
-const hydrateUsername = (username: string): InstagramUserKey => ({ username });
-const hydrateUsernames = (usernameList: string[]): InstagramUserKey[] => usernameList.map(hydrateUsername);
+const hydrateUsername = (username: string): TInstagramUserKey => ({ username });
+const hydrateUsernames = (usernameList: string[]): TInstagramUserKey[] => usernameList.map(hydrateUsername);
 
 export const hydrate = {
     username: hydrateUsername,

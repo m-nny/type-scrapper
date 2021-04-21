@@ -19,7 +19,13 @@ export type ImportInstagramUserDataInput = {
 };
 
 export type Mutation = {
+  enqueueImport: Scalars['ID'];
   importUser: Scalars['ID'];
+};
+
+
+export type MutationEnqueueImportArgs = {
+  jobName: Scalars['String'];
 };
 
 
@@ -29,11 +35,12 @@ export type MutationImportUserArgs = {
 };
 
 export type Query = {
+  zero2: Scalars['Int'];
   zero: Scalars['Int'];
 };
 
 export type AddImportUserJobMutationVariables = Exact<{
-  jobName: Scalars['String'];
+  jobName?: Maybe<Scalars['String']>;
   jobData: ImportInstagramUserDataInput;
 }>;
 
@@ -42,7 +49,7 @@ export type AddImportUserJobMutation = Pick<Mutation, 'importUser'>;
 
 
 export const AddImportUserJobDocument = gql`
-    mutation addImportUserJob($jobName: String!, $jobData: ImportInstagramUserDataInput!) {
+    mutation addImportUserJob($jobName: String = "getUserProfile", $jobData: ImportInstagramUserDataInput!) {
   importUser(jobName: $jobName, data: $jobData)
 }
     `;

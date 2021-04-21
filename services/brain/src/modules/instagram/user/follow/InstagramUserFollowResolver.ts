@@ -2,9 +2,10 @@ import { singleton } from 'tsyringe';
 import { Args, FieldResolver, Int, Mutation, Query, Resolver, ResolverInterface, Root } from 'type-graphql';
 import { ListPageArgs } from '../../../common/dto';
 import { InstagramUserService } from '../InstagramUserService';
-import { InstagramUserFollowedByInput, InstagramUserFollowingInput } from './dto';
+import { GetMostFollowedNotImportedUsers, InstagramUserFollowedByInput, InstagramUserFollowingInput } from './dto';
 import { InstagramUserFollow, InstagramUserFollowList } from './InstagramUserFollow';
 import { InstagramUserFollowService } from './InstagramUserFollowService';
+import { TInstagramUserFollowerCountList } from './types';
 import { hydrate } from './utils';
 
 @singleton()
@@ -41,5 +42,11 @@ export class InstagramUserFollowResolver implements ResolverInterface<InstagramU
         }
         const follows = await this.instagramUserFollowService.addManyFollowees(args.username, args.following);
         return follows.length;
+    }
+    @Query(() => GetMostFollowedNotImportedUsers)
+    public async mostFollowedNotImportedUsers(
+        @Args() page: ListPageArgs,
+    ): Promise<TInstagramUserFollowerCountList> {
+        return await this.instagramUserFollowService.getMostFollowedNotImportedUsers(page);
     }
 }

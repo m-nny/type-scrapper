@@ -1,3 +1,15 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 9001,
+            "driver": "PostgreSQL",
+            "name": "brain",
+            "database": "scrapper",
+            "username": "m-nny",
+            "password": "change-in-production"
+        }
+    ]
 }

@@ -14,6 +14,7 @@ export const defaultConfig = configUtils.createConfig({
         },
         names: {
             importInstagramUser: configUtils.string('import_insta_user'),
+            enqueueImport: configUtils.string('enqueue_import'),
         },
         role: configUtils.string<WorkerRole>('both'),
     },
@@ -33,6 +34,12 @@ export const defaultConfig = configUtils.createConfig({
             port: configUtils.number(3003),
             endpoint: configUtils.string('/graphql'),
         },
+    },
+    worker: {
+        concurrency: configUtils.number(2),
+    },
+    scheduler: {
+        maxStalledCount: configUtils.number(1),
     },
 });
 export type ConfigShape = typeof defaultConfig;

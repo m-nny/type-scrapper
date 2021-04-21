@@ -6,11 +6,9 @@ import {
     JobHandlers,
     okResult,
     throwIfError,
-
     UnknownJobNameError
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
-import _ from 'lodash';
 import { singleton } from 'tsyringe';
 import { BrainMicroservice } from '../brain/BrainService';
 import {
@@ -18,9 +16,11 @@ import {
     AddInstagramUserIsFollowingMutationVariables,
     CreateInstagramUserMutationVariables
 } from '../brain/sdk';
+import { filterJob, filterUserFollowers } from '../common/filters';
 import { InstagramMicroservice } from '../instagram/InstagramService';
 import { GetFollowersQuery, GetFollowingsQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
+import { filterFollowers, filterFollowings, GetAllUserFollowersResult, GetAllUserFollowingsResult } from './filters';
 
 type ImportInstagramUserJobHandlers = JobHandlers<ImportInstagramUserJob, Job<ImportInstagramUserData>>;
 
@@ -142,31 +142,6 @@ export class ImportInstagramUserProcessor {
         throw error;
     }
 }
-
-type GetAllUserFollowersResult = {
-    count: number;
-    followers: string[];
-};
-type GetAllUserFollowingsResult = {
-    count: number;
-    followings: string[];
-};
-
-const filterJob = (job: Job) => _.pick(job, ['id', 'name', 'data']);
-
-const filterUserFollowers = (followers: string[]) => ({
-    followers: filterArray(followers),
-});
-const filterFollowings = ({ followings, ...rest }: GetAllUserFollowingsResult) => ({
-    followings: filterArray(followings),
-    ...rest,
-});
-const filterFollowers = ({ followers, ...rest }: GetAllUserFollowersResult) => ({
-    followers: filterArray(followers),
-    ...rest,
-});
-const filterArray = (array: string[]) =>
-    array.length < 5 ? array : { length: array.length, head: array.slice(0, 1)[0], tail: array.slice(-1)[0] };
 
 const makeInstagramUserInput = ({
     user: { username, ...info },

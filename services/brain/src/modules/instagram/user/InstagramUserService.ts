@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 import { Connection, IsNull } from 'typeorm';
 import { defaultListPage, TListPageResult } from '../../common/type';
-import { InstagramUser, InstagramUserCreateDTO, InstagramUserKey, InstagramUserRepository } from './InstagramUser';
+import { InstagramUser, InstagramUserCreateDTO, TInstagramUserKey, InstagramUserRepository } from './InstagramUser';
 import { GetCoupleInstagramUsersArgs } from './types';
 
 @singleton()
@@ -10,10 +10,10 @@ export class InstagramUserService {
     public constructor(connection: Connection) {
         this.repository = connection.getRepository(InstagramUser);
     }
-    public get(key: InstagramUserKey): Promise<InstagramUser | undefined> {
+    public get(key: TInstagramUserKey): Promise<InstagramUser | undefined> {
         return this.repository.findOne(key);
     }
-    public getOrFail(key: InstagramUserKey): Promise<InstagramUser> {
+    public getOrFail(key: TInstagramUserKey): Promise<InstagramUser> {
         return this.repository.findOneOrFail(key);
     }
     public async getCouple({
@@ -37,5 +37,8 @@ export class InstagramUserService {
     public createCoupleByUsernames(dto: InstagramUserCreateDTO[]): Promise<InstagramUser[]> {
         const item = this.repository.create(dto);
         return this.repository.save(item);
+    }
+    public async getMostFollowed(): Promise<InstagramUser | undefined> {
+        return undefined;
     }
 }

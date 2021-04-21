@@ -17,6 +17,12 @@ export type Scalars = {
 };
 
 
+export type GetMostFollowedNotImportedUsers = {
+  askedPage: ListPage;
+  items: Array<InstagramUserFollowerCount>;
+  totalCount: Scalars['Float'];
+};
+
 export type InstagramImage = {
   id: Scalars['String'];
   url: Scalars['String'];
@@ -43,6 +49,11 @@ export type InstagramUserFollowList = {
   askedPage: ListPage;
   items: Array<InstagramUserFollow>;
   totalCount: Scalars['Float'];
+};
+
+export type InstagramUserFollowerCount = {
+  username: Scalars['String'];
+  followersCount: Scalars['Float'];
 };
 
 export type InstagramUserInfo = {
@@ -116,6 +127,7 @@ export type NewRecipeInput = {
 
 export type Query = {
   instagramFollows: InstagramUserFollowList;
+  mostFollowedNotImportedUsers: GetMostFollowedNotImportedUsers;
   instagramUser: InstagramUser;
   instagramUsers: InstagramUserList;
   recipe: Recipe;
@@ -124,6 +136,12 @@ export type Query = {
 
 
 export type QueryInstagramFollowsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryMostFollowedNotImportedUsersArgs = {
   skip?: Maybe<Scalars['Int']>;
   take?: Maybe<Scalars['Int']>;
 };
@@ -181,6 +199,13 @@ export type CreateInstagramUserMutationVariables = Exact<{
 
 export type CreateInstagramUserMutation = { createInstagramUser: Pick<InstagramUser, 'username'> };
 
+export type GetMostFollowedInstagramUserQueryVariables = Exact<{
+  take?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetMostFollowedInstagramUserQuery = { mostFollowedNotImportedUsers: { items: Array<Pick<InstagramUserFollowerCount, 'username' | 'followersCount'>> } };
+
 
 export const AddInstagramUserFollowedByDocument = gql`
     mutation addInstagramUserFollowedBy($username: String!, $followedBy: [String!]!) {
@@ -203,6 +228,16 @@ export const CreateInstagramUserDocument = gql`
   }
 }
     `;
+export const GetMostFollowedInstagramUserDocument = gql`
+    query getMostFollowedInstagramUser($take: Int = 1) {
+  mostFollowedNotImportedUsers(take: $take) {
+    items {
+      username
+      followersCount
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 
@@ -218,6 +253,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createInstagramUser(variables: CreateInstagramUserMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateInstagramUserMutation> {
       return withWrapper(() => client.request<CreateInstagramUserMutation>(CreateInstagramUserDocument, variables, requestHeaders));
+    },
+    getMostFollowedInstagramUser(variables?: GetMostFollowedInstagramUserQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetMostFollowedInstagramUserQuery> {
+      return withWrapper(() => client.request<GetMostFollowedInstagramUserQuery>(GetMostFollowedInstagramUserDocument, variables, requestHeaders));
     }
   };
 }

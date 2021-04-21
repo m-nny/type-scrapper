@@ -2,7 +2,7 @@ import { singleton } from 'tsyringe';
 import { Arg, Args, FieldResolver, Mutation, Query, Resolver, ResolverInterface, Root } from 'type-graphql';
 import {
     InstagramUserInput,
-    InstagramUserKeyDTO,
+    InstagramUserKeyInput,
     InstagramUsersArgs
 } from './dto';
 import { InstagramUserNotFoundError } from './errors';
@@ -18,7 +18,7 @@ export class InstagramUserResolver implements ResolverInterface<InstagramUser> {
         private instagramUserFollowService: InstagramUserFollowService,
     ) {}
     @Query(() => InstagramUser)
-    public async instagramUser(@Args() key: InstagramUserKeyDTO): Promise<InstagramUser> {
+    public async instagramUser(@Args() key: InstagramUserKeyInput): Promise<InstagramUser> {
         const item = await this.instagramUserService.get(key);
         if (item === undefined) {
             throw new InstagramUserNotFoundError(key);

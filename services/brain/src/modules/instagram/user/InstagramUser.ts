@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryColumn, Repository } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryColumn, Repository } from 'typeorm';
 import { ListPage } from '../../common/dto';
 import { TListPageResult } from '../../common/type';
 import { InstagramImage } from '../image/InstagramImage';
@@ -27,12 +27,12 @@ export class InstagramUser {
     public images?: InstagramImage;
 
     @Field(() => [InstagramUserFollow])
-    @OneToMany(() => InstagramUserFollow, follow => follow.followee)
+    @OneToMany(() => InstagramUserFollow, (follow) => follow.followee)
     @JoinTable()
     public follows?: InstagramUserFollow[];
 
     @Field(() => [InstagramUserFollow])
-    @OneToMany(() => InstagramUserFollow, follow => follow.follower)
+    @OneToMany(() => InstagramUserFollow, (follow) => follow.follower)
     @JoinTable()
     public followedBy?: InstagramUserFollow[];
 }
@@ -49,7 +49,13 @@ export class InstagramUserList implements TListPageResult<InstagramUser> {
 
 export type InstagramUserRepository = Repository<InstagramUser>;
 
-export type InstagramUserKey = Pick<InstagramUser, 'username'>;
+export type TInstagramUserKey = Pick<InstagramUser, 'username'>;
+
+@ObjectType()
+export class InstagramUserKey implements TInstagramUserKey {
+    @Field()
+    public username!: string;
+}
 export type InstagramUserCreateDTO = Omit<InstagramUser, 'info' | 'images' | 'follows'> & {
     info?: InstagramUserInfoCreateDTO;
 };

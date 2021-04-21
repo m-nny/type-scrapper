@@ -1,11 +1,10 @@
 import { AppLogger, getAppLogger, makeLogger, setAppLogger } from '@app/common';
-import { QueueScheduler, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import _ from 'lodash';
 import { container as tsyringeContainer, DependencyContainer } from 'tsyringe';
 import { ConfigWrapper, loadConfig, PartialConfig } from './config';
-import { runScheduler, shutDownScheduler } from './modules/queue/scheduler';
-import { runWorker, shutDownWorker } from './modules/queue/worker';
+import { QueueSchedulersWrapper, runScheduler, shutDownScheduler } from './modules/queue/scheduler';
+import { runWorker, shutDownWorker, WorkersWrapper } from './modules/queue/worker';
 import { RedisWrapper } from './modules/utils/wrappers';
 
 const configureContainer = async (configOverride?: PartialConfig) => {
@@ -21,12 +20,12 @@ const configureContainer = async (configOverride?: PartialConfig) => {
     return container;
 };
 
-const configureShutdown = (container: DependencyContainer, onShutdown: () => void) => {
+const configureShutdown = (container: DependencyContainer, onShutdown: () => Promise<void>) => {
     const { redis } = container.resolve(RedisWrapper);
     const logger = container.resolve(AppLogger);
-    const shutDown = () => {
+    const shutDown = async () => {
         logger.info('App is shutting down');
-        onShutdown();
+        await onShutdown();
         process.exit(1);
     };
     process.on('SIGTERM', shutDown);
@@ -42,17 +41,17 @@ export const runApp = async () => {
     const logger = container.resolve(AppLogger);
     const { config } = container.resolve(ConfigWrapper);
     const role = config.queue.role;
-    let worker: Worker | undefined;
+    let worker: WorkersWrapper | undefined;
     if (role === 'worker' || role === 'both') {
         worker = await runWorker(container);
     }
-    let scheduler: QueueScheduler | undefined;
+    let scheduler: QueueSchedulersWrapper | undefined;
     if (role === 'scheduler' || role === 'both') {
         scheduler = await runScheduler(container);
     }
-    configureShutdown(container, () => {
-        if (worker) shutDownWorker(container);
-        if (scheduler) shutDownScheduler(container);
+    configureShutdown(container, async () => {
+        if (worker) await shutDownWorker(container);
+        if (scheduler) await shutDownScheduler(container);
     });
     logger.info('Worker is running');
 };

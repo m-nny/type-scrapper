@@ -22,6 +22,7 @@ export const defaultConfig = configUtils.createConfig({
         },
         names: {
             importInstagramUser: configUtils.string('import_insta_user'),
+            enqueueImport: configUtils.string('enqueue_import'),
         },
     },
 });

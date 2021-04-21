@@ -2,6 +2,7 @@ import { singleton } from 'tsyringe';
 import { Connection } from 'typeorm';
 import { defaultListPage, TListPage, TListPageResult } from '../../../common/type';
 import { InstagramUserFollow, InstagramUserFollowRepository } from './InstagramUserFollow';
+import { TInstagramUserFollowerCount, TInstagramUserFollowerCountList } from './types';
 
 @singleton()
 export class InstagramUserFollowService {
@@ -36,5 +37,22 @@ export class InstagramUserFollowService {
     }
     public async getUserFollowedBy(username: string): Promise<InstagramUserFollow[]> {
         return await this.repository.find({ where: { followeeUsername: username } });
+    }
+    public async getMostFollowedNotImportedUsers(page: TListPage): Promise<TInstagramUserFollowerCountList> {
+        const items: TInstagramUserFollowerCount[] = await this.repository.query(`
+            SELECT
+                "followeeUsername" as username,
+                id,
+                COUNT(*) as "followersCount"
+            FROM instagram_user_follow
+            LEFT JOIN instagram_user
+            ON "followeeUsername" = username
+            WHERE "id" IS NULL
+            GROUP BY "followeeUsername", "id"
+            ORDER BY "followersCount" DESC, "username" ASC
+            LIMIT $1
+            OFFSET $2
+        `, [page.take, page.skip]);
+        return { totalCount: items.length, items, askedPage: page };
     }
 }

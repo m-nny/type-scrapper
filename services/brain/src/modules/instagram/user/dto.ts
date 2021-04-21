@@ -1,13 +1,13 @@
 import { IsBoolean, IsNumberString, IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { ArgsType, Field, InputType } from 'type-graphql';
 import { ListPageArgs } from '../../common/dto';
-import { InstagramUserCreateDTO, InstagramUserKey } from './InstagramUser';
+import { InstagramUserCreateDTO, TInstagramUserKey } from './InstagramUser';
 import { InstagramUserInfoCreateDTO } from './InstagramUserInfo';
 import { GetCoupleInstagramUsersArgs } from './types';
 
 @ArgsType()
 @InputType()
-export class InstagramUserKeyDTO implements InstagramUserKey {
+export class InstagramUserKeyInput implements TInstagramUserKey {
     @Field()
     @IsString()
     public username!: string;
@@ -25,7 +25,7 @@ export class InstagramUserInfoInput implements InstagramUserInfoCreateDTO {
 }
 
 @InputType()
-export class InstagramUserInput extends InstagramUserKeyDTO implements InstagramUserCreateDTO {
+export class InstagramUserInput extends InstagramUserKeyInput implements InstagramUserCreateDTO {
     @Field({ nullable: true })
     @IsOptional()
     @ValidateNested()
