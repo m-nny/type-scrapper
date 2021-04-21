@@ -6,19 +6,20 @@ import {
     JobHandlers,
     okResult,
     throwIfError,
-    UnknownJobNameError
+    UnknownJobNameError,
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import { singleton } from 'tsyringe';
+import { ConfigWrapper } from '../../config';
 import { BrainMicroservice } from '../brain/BrainService';
 import {
     AddInstagramUserFollowedByMutationVariables,
     AddInstagramUserIsFollowingMutationVariables,
-    CreateInstagramUserMutationVariables
+    CreateInstagramUserMutationVariables,
 } from '../brain/sdk';
 import { filterJob, filterUserFollowers } from '../common/filters';
 import { InstagramMicroservice } from '../instagram/InstagramService';
-import { GetFollowersQuery, GetFollowingsQuery, GetProfileQuery } from '../instagram/sdk';
+import { GetFollowersByIdQuery, GetFollowingsByIdQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
 import { filterFollowers, filterFollowings, GetAllUserFollowersResult, GetAllUserFollowingsResult } from './filters';
 
@@ -29,15 +30,18 @@ export class ImportInstagramUserProcessor {
     private instagramSdk;
     private brainSdk;
     private queueSdk;
+    private maxFollowersNumber: number;
     public constructor(
         private logger: AppLogger,
         instagramService: InstagramMicroservice,
         brainService: BrainMicroservice,
         queueService: QueueMicroservice,
+        { config }: ConfigWrapper,
     ) {
         this.instagramSdk = instagramService.sdk;
         this.brainSdk = brainService.sdk;
         this.queueSdk = queueService.sdk;
+        this.maxFollowersNumber = config.instagram.maxFollowersNumber;
     }
     public get processor(): Processor<ImportInstagramUserData> {
         return async (job) => {
@@ -70,7 +74,8 @@ export class ImportInstagramUserProcessor {
         },
         getUserFollowers: async (job) => {
             const { data } = job;
-            const followers = await this.getAllUserFollowers(data.username);
+            const instagramProfile = await this.instagramSdk.getProfile(data);
+            const followers = await this.getAllUserFollowers(instagramProfile.user.id);
             this.logger.debug(filterFollowers(followers), `Got user followers`);
             const imported = await this.brainSdk.addInstagramUserFollowedBy(hydrateFollowers(data.username, followers));
             this.logger.info(imported, `saved user followers`);
@@ -78,7 +83,8 @@ export class ImportInstagramUserProcessor {
         },
         getUserFollowings: async (job) => {
             const { data } = job;
-            const followings = await this.getAllUserFollowings(data.username);
+            const instagramProfile = await this.instagramSdk.getProfile(data);
+            const followings = await this.getAllUserFollowings(instagramProfile.user.id);
             this.logger.debug(filterFollowings(followings), `Got user followings`);
             const imported = await this.brainSdk.addInstagramUserIsFollowing(
                 hydrateFollowings(data.username, followings),
@@ -88,13 +94,16 @@ export class ImportInstagramUserProcessor {
         },
     };
 
-    private getAllUserFollowings = async (username: string): Promise<GetAllUserFollowingsResult> => {
+    private getAllUserFollowings = async (
+        userId: string,
+        maxNumber = this.maxFollowersNumber,
+    ): Promise<GetAllUserFollowingsResult> => {
         let cursor = undefined;
         const followings = [];
         let count = 0;
-        while (true) {
-            const result: GetFollowingsQuery = await this.instagramSdk.getFollowings({ username, cursor });
-            const userFollowings = result.user.followings;
+        while (followings.length < maxNumber) {
+            const result: GetFollowingsByIdQuery = await this.instagramSdk.getFollowingsById({ userId, cursor });
+            const userFollowings = result.followingsById;
             const userFollowingsUsername = userFollowings.data.map((user) => user.username);
             const hasNextPage = userFollowings.page_info.has_next_page;
             cursor = userFollowings.page_info.end_cursor;
@@ -112,13 +121,16 @@ export class ImportInstagramUserProcessor {
         return { count, followings };
     };
 
-    private getAllUserFollowers = async (username: string): Promise<GetAllUserFollowersResult> => {
+    private getAllUserFollowers = async (
+        userId: string,
+        maxNumber = this.maxFollowersNumber,
+    ): Promise<GetAllUserFollowersResult> => {
         let cursor = undefined;
         const followers = [];
         let count = 0;
-        while (true) {
-            const result: GetFollowersQuery = await this.instagramSdk.getFollowers({ username, cursor });
-            const userFollowers = result.user.followers;
+        while (followers.length < maxNumber) {
+            const result: GetFollowersByIdQuery = await this.instagramSdk.getFollowersById({ userId, cursor });
+            const userFollowers = result.followersById;
             const userFollowersUsername = userFollowers.data.map((user) => user.username);
             const hasNextPage = userFollowers.page_info.has_next_page;
             cursor = userFollowers.page_info.end_cursor;

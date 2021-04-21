@@ -13,3 +13,17 @@ query getFollowers($username: String!, $cursor: String) {
         }
     }
 }
+
+# Write your query or mutation here
+query getFollowersById($userId: String!, $cursor: String) {
+    followersById(userId: $userId, page: { first: 50, after: $cursor }) {
+        count
+        page_info {
+            has_next_page
+            end_cursor
+        }
+        data {
+            username
+        }
+    }
+}

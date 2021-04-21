@@ -41,6 +41,9 @@ export const defaultConfig = configUtils.createConfig({
     scheduler: {
         maxStalledCount: configUtils.number(1),
     },
+    instagram: {
+        maxFollowersNumber: configUtils.number(100)
+    }
 });
 export type ConfigShape = typeof defaultConfig;
 export type PlainConfig = PlainConfigShape<ConfigShape>;

@@ -43,7 +43,9 @@ export class QueueSchedulersWrapper {
         const logger = getAppLogger();
         return await Promise.all(
             this.schedulers.map(([scheduler, queueName]) =>
-                scheduler.close().then(() => logger.info({ queueName }, `Closed QueueScheduler on ${queueName}`)),
+                scheduler
+                    .close()
+                    .then(() => logger.info({ queueName }, `Closed QueueScheduler on ${queueName}`)),
             ),
         );
     }

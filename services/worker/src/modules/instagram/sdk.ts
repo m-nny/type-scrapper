@@ -124,6 +124,17 @@ export type GetFollowersQuery = { user: { followers: (
       & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
     ) } };
 
+export type GetFollowersByIdQueryVariables = Exact<{
+  userId: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetFollowersByIdQuery = { followersById: (
+    Pick<InstagramFollowers, 'count'>
+    & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
+  ) };
+
 export type GetFollowingsQueryVariables = Exact<{
   username: Scalars['String'];
   cursor?: Maybe<Scalars['String']>;
@@ -134,6 +145,17 @@ export type GetFollowingsQuery = { user: { followings: (
       Pick<InstagramFollowings, 'count'>
       & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
     ) } };
+
+export type GetFollowingsByIdQueryVariables = Exact<{
+  userId: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetFollowingsByIdQuery = { followingsById: (
+    Pick<InstagramFollowings, 'count'>
+    & { page_info: Pick<InstagramPageInfo, 'has_next_page' | 'end_cursor'>, data: Array<Pick<InstagramFollower, 'username'>> }
+  ) };
 
 export type GetProfileQueryVariables = Exact<{
   username: Scalars['String'];
@@ -162,6 +184,20 @@ export const GetFollowersDocument = gql`
   }
 }
     `;
+export const GetFollowersByIdDocument = gql`
+    query getFollowersById($userId: String!, $cursor: String) {
+  followersById(userId: $userId, page: {first: 50, after: $cursor}) {
+    count
+    page_info {
+      has_next_page
+      end_cursor
+    }
+    data {
+      username
+    }
+  }
+}
+    `;
 export const GetFollowingsDocument = gql`
     query getFollowings($username: String!, $cursor: String) {
   user(username: $username) {
@@ -174,6 +210,20 @@ export const GetFollowingsDocument = gql`
       data {
         username
       }
+    }
+  }
+}
+    `;
+export const GetFollowingsByIdDocument = gql`
+    query getFollowingsById($userId: String!, $cursor: String) {
+  followingsById(userId: $userId, page: {first: 50, after: $cursor}) {
+    count
+    page_info {
+      has_next_page
+      end_cursor
+    }
+    data {
+      username
     }
   }
 }
@@ -197,8 +247,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getFollowers(variables: GetFollowersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowersQuery> {
       return withWrapper(() => client.request<GetFollowersQuery>(GetFollowersDocument, variables, requestHeaders));
     },
+    getFollowersById(variables: GetFollowersByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowersByIdQuery> {
+      return withWrapper(() => client.request<GetFollowersByIdQuery>(GetFollowersByIdDocument, variables, requestHeaders));
+    },
     getFollowings(variables: GetFollowingsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowingsQuery> {
       return withWrapper(() => client.request<GetFollowingsQuery>(GetFollowingsDocument, variables, requestHeaders));
+    },
+    getFollowingsById(variables: GetFollowingsByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFollowingsByIdQuery> {
+      return withWrapper(() => client.request<GetFollowingsByIdQuery>(GetFollowingsByIdDocument, variables, requestHeaders));
     },
     getProfile(variables: GetProfileQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProfileQuery> {
       return withWrapper(() => client.request<GetProfileQuery>(GetProfileDocument, variables, requestHeaders));

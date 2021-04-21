@@ -14,6 +14,10 @@ export type Scalars = {
   Float: number;
 };
 
+export type EnqueueImportDataInput = {
+  count?: Maybe<Scalars['Float']>;
+};
+
 export type ImportInstagramUserDataInput = {
   username: Scalars['String'];
 };
@@ -25,6 +29,7 @@ export type Mutation = {
 
 
 export type MutationEnqueueImportArgs = {
+  data: EnqueueImportDataInput;
   jobName: Scalars['String'];
 };
 
