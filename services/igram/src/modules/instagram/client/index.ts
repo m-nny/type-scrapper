@@ -7,6 +7,7 @@ import {
     TInstagramCredentials,
     TInstagramFollowings,
     TInstagramLoginOptions,
+    TInstagramLoginResult,
     TInstagramPagination,
     TInstagramProfile,
     TInstagramUser,
@@ -20,7 +21,10 @@ export class InstagramClient {
     public constructor(args: TInstagramConstructorArgs, private logger: AppLogger) {
         this.client = new Instagram(args);
     }
-    public login(credentials: TInstagramCredentials, opts: TInstagramLoginOptions = {}): AsyncResult<unknown> {
+    public login(
+        credentials: TInstagramCredentials,
+        opts: TInstagramLoginOptions = {},
+    ): AsyncResult<TInstagramLoginResult> {
         return this.requestHelper(() => this.client.login(credentials, opts), 'login');
     }
     public logout(): AsyncResult<unknown> {

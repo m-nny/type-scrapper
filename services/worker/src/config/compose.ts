@@ -8,4 +8,9 @@ export const composeConfig = configUtils.createAppEnvConfig<ConfigShape>({
             host: 'redis',
         },
     },
+    microservice: {
+        brain: { hostname: 'brain' },
+        instagram: { hostname: 'igram' },
+        queue: { hostname: 'queue' },
+    },
 });

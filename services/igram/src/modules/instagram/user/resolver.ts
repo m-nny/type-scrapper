@@ -1,7 +1,6 @@
 import { throwIfError } from '@app/models';
 import { singleton } from 'tsyringe';
 import { Arg, Args, FieldResolver, Query, Resolver, Root } from 'type-graphql';
-import { CacheControl } from '../../graphql/cacheControl';
 import { InstagramClient } from '../client';
 import { TInstagramFollowers, TInstagramFollowings, TInstagramUser } from '../client/types';
 import { InstagramPaginationArgs } from '../common/dto';
@@ -30,6 +29,22 @@ export class InstagramUserResolver {
         @Args() page: InstagramPaginationArgs,
     ): Promise<TInstagramFollowings> {
         const followers = await this.client.getFollowings({ userId: user.id, ...page }).then(throwIfError);
+        return followers;
+    }
+    @Query(() => InstagramFollowers)
+    public async followersById(
+        @Arg('userId') userId: string,
+        @Arg('page') page: InstagramPaginationArgs,
+    ): Promise<TInstagramFollowers> {
+        const followers = await this.client.getFollowers({ userId, ...page }).then(throwIfError);
+        return followers;
+    }
+    @Query(() => InstagramFollowings)
+    public async followingsById(
+        @Arg('userId') userId: string,
+        @Arg('page') page: InstagramPaginationArgs,
+    ): Promise<TInstagramFollowings> {
+        const followers = await this.client.getFollowings({ userId, ...page }).then(throwIfError);
         return followers;
     }
 }

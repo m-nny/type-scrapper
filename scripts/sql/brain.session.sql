@@ -24,5 +24,16 @@ SELECT
     "followerUsername"
 FROM
     instagram_user_follow
-WHERE "followerUsername" = 'madiyar.k'
+WHERE "followeeUsername" = 'illyarkyn'
+;
+-- @block imported_users
+-- @conn brain
+SELECT
+    username,
+    id
+FROM
+    instagram_user
+WHERE
+    id IS NOT NULL
+-- WHERE "followeeUsername" = 'illyarkyn'
 ;

@@ -1,0 +1,10 @@
+/.git
+services/**/node_modules
+services/**/build
+services/**/dist
+services/**/tsconfig.tsbuildinfo
+services/**/Dockerfile
+node_modules
+/k8s
+/data
+/docker

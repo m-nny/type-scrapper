@@ -43,6 +43,11 @@ export type InstagramPageInfo = {
   end_cursor?: Maybe<Scalars['String']>;
 };
 
+export type InstagramPaginationArgs = {
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+};
+
 export type InstagramProfile = {
   first_name: Scalars['String'];
   last_name: Scalars['String'];
@@ -87,11 +92,25 @@ export type InstagramUserFollowingsArgs = {
 export type Query = {
   myProfile: InstagramProfile;
   user: InstagramUser;
+  followersById: InstagramFollowers;
+  followingsById: InstagramFollowings;
 };
 
 
 export type QueryUserArgs = {
   username: Scalars['String'];
+};
+
+
+export type QueryFollowersByIdArgs = {
+  page: InstagramPaginationArgs;
+  userId: Scalars['String'];
+};
+
+
+export type QueryFollowingsByIdArgs = {
+  page: InstagramPaginationArgs;
+  userId: Scalars['String'];
 };
 
 export type GetFollowersQueryVariables = Exact<{

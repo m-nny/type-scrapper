@@ -53,10 +53,25 @@ services:
       dockerfile: docker/Dockerfile.microservice
       args:
         microservice: igram
-    env_file: .env.common
+    env_file:
+      - .env
+      - .env.common
+    volumes:
+      - igram-cookies:/app/data/cookies
     ports:
       - 3003:3003
 
+  grafana:
+    image: grafana/grafana:7.5.4
+    profiles:
+      - 'metrics'
+    ports:
+      - 4000:3000
+    volumes:
+      - grafana-volume/var/lib/grafana
+    
 volumes:
   # Postgres' data
   db-volume:
+  grafana-volume:
+  igram-cookies:

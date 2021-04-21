@@ -1,4 +1,4 @@
-import { CookieJar, Store } from 'tough-cookie';
+import { Store } from 'tough-cookie';
 
 export type TInstagramCredentials = {
     username: string;
@@ -7,7 +7,7 @@ export type TInstagramCredentials = {
 export type TInstagramPagination = {
     first?: number;
     after?: string;
-}
+};
 
 export type TInstagramConstructorArgs = TInstagramCredentials & {
     cookieStore?: Store;
@@ -17,3 +17,7 @@ export type TInstagramLoginOptions = {
     _sharedData?: boolean;
 };
 
+export type TInstagramLoginResult = {
+    authenticated: boolean;
+    status: string;
+};

@@ -1,5 +1,5 @@
 import { AppLogger, makeLogger } from '@app/common';
-import { AsyncOkResult, isResultError, okResult } from '@app/models';
+import { AsyncOkResult, isResultError, makeResultError, okResult } from '@app/models';
 import { ApolloServer } from 'apollo-server-express';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
 import express from 'express';
@@ -61,6 +61,9 @@ export const initializeServices = async (container: DependencyContainer): AsyncO
     const loggedIn = await instagramClient.login(config.instagram.credentials);
     if (isResultError(loggedIn)) {
         return loggedIn;
+    }
+    if (!loggedIn.authenticated) {
+        return makeResultError('INTERNAL_ERROR', 'Could not log in to instagram', { payload: loggedIn });
     }
     logger.info('Services initialized');
     return okResult;
