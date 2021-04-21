@@ -12,8 +12,8 @@ export class EnqueueImportResolver {
         return 0;
     }
     @Mutation(() => ID)
-    public async enqueueImport(@Args() { jobName }: EnqueueImportInput): Promise<string> {
-        const job = await this.queue.addJob(jobName);
+    public async enqueueImport(@Args() { jobName, data }: EnqueueImportInput): Promise<string> {
+        const job = await this.queue.addJob(jobName, data);
         return job.id ?? '-1';
     }
 }

@@ -1,10 +1,9 @@
-import { EnqueueImportJob } from '@app/models';
+import { EnqueueImportData, EnqueueImportJob } from '@app/models';
 import { Queue } from 'bullmq';
 import { singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../../config';
 import { RedisWrapper } from '../../utils/wrappers';
 
-type EnqueueImportData = void;
 @singleton()
 export class EnqueueImportQueue {
     private queue: Queue<EnqueueImportData>;

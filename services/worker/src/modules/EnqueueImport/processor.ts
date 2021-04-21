@@ -1,11 +1,12 @@
 import { AppLogger } from '@app/common';
 import {
+    EnqueueImportData,
     EnqueueImportJob,
     isEnqueueImportJob,
     JobHandlers,
     okResult,
     throwIfError,
-    UnknownJobNameError,
+    UnknownJobNameError
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import { singleton } from 'tsyringe';
@@ -15,7 +16,7 @@ import { filterArray, filterJob } from '../common/filters';
 import { QueueMicroservice } from '../queue/QueueService';
 import { AddImportUserJobMutationVariables } from '../queue/sdk';
 
-type EnqueueImportJobHandlers = JobHandlers<EnqueueImportJob>;
+type EnqueueImportJobHandlers = JobHandlers<EnqueueImportJob, Job<EnqueueImportData>>;
 
 @singleton()
 export class EnqueueJobProcessor {
@@ -25,7 +26,7 @@ export class EnqueueJobProcessor {
         this.brainSdk = brainService.sdk;
         this.queueSdk = queueService.sdk;
     }
-    public get processor(): Processor {
+    public get processor(): Processor<EnqueueImportData> {
         return async (job) => {
             this.logger.debug(filterJob(job), `Running job #${job.id ?? 0}`);
             try {
@@ -42,8 +43,9 @@ export class EnqueueJobProcessor {
     }
 
     private jobHandlers: EnqueueImportJobHandlers = {
-        mostFollowed: async () => {
-            const data = await this.brainSdk.getMostFollowedInstagramUser({});
+        mostFollowed: async (job) => {
+            const args = job.data;
+            const data = await this.brainSdk.getMostFollowedInstagramUser({ take: args.count });
             this.logger.info(filterMostFollowed(data), `got most followed users`);
             const enqueued = await Promise.all(hydrate(data).map((payload) => this.queueSdk.addImportUserJob(payload)));
             this.logger.info(`enqueued import for ${enqueued.length} users`);
