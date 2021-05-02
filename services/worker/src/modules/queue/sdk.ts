@@ -20,6 +20,7 @@ export type EnqueueImportDataInput = {
 
 export type ImportInstagramUserDataInput = {
   username: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {

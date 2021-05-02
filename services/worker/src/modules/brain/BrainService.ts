@@ -10,6 +10,6 @@ export class BrainMicroservice {
     public sdk: Sdk;
     public constructor({ config }: ConfigWrapper) {
         this.client = new GraphQLClient(utils.makeUrl(config.microservice.brain));
-        this.sdk = getSdk(this.client);
+        this.sdk = getSdk(this.client, utils.retryWrapper(config.microservice.retry));
     }
 }

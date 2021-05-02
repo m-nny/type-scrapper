@@ -1,12 +1,10 @@
-import { configUtils, defaultLoggerOptions } from '@app/common';
+import { configUtils, defaultLoggerOptions, defaultOptions } from '@app/common';
 import { AppEnv, PartialConfigShape, PlainConfigShape } from '@app/common/dist/config/types';
 import { WorkerRole } from '../modules/common/types';
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,
-    logger: {
-        ...defaultLoggerOptions,
-    },
+    ...defaultLoggerOptions,
     queue: {
         connection: {
             host: configUtils.string('localhost'),
@@ -34,16 +32,21 @@ export const defaultConfig = configUtils.createConfig({
             port: configUtils.number(3003),
             endpoint: configUtils.string('/graphql'),
         },
+        retry: defaultOptions.retry,
     },
     worker: {
         concurrency: configUtils.number(2),
+        limiter: {
+            max: configUtils.number(10),
+            duration: configUtils.number(1000),
+        },
     },
     scheduler: {
         maxStalledCount: configUtils.number(1),
     },
     instagram: {
-        maxFollowersNumber: configUtils.number(100)
-    }
+        maxFollowersNumber: configUtils.number(500),
+    },
 });
 export type ConfigShape = typeof defaultConfig;
 export type PlainConfig = PlainConfigShape<ConfigShape>;

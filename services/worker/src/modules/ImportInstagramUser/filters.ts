@@ -11,8 +11,10 @@ export const filterFollowers = ({ followers, ...rest }: GetAllUserFollowersResul
 export type GetAllUserFollowersResult = {
     count: number;
     followers: string[];
+    cursor?: string;
 };
 export type GetAllUserFollowingsResult = {
     count: number;
     followings: string[];
+    cursor?: string;
 };

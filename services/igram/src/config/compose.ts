@@ -1,7 +1,7 @@
 import { configUtils } from '@app/common';
-import { ConfigShape } from './default';
+import { RootConfigShape } from './default';
 
-export const composeConfig = configUtils.createAppEnvConfig<ConfigShape>({
+export const composeConfig = configUtils.createAppEnvConfig<RootConfigShape>({
     env: 'compose',
     cors: {
     },

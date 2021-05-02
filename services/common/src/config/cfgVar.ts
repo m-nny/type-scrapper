@@ -1,58 +1,82 @@
+import _ from 'lodash';
 import { Overrider } from './types';
-import { parseArray } from './utils';
+import { parseArray, TypeValidator } from './utils';
 
-export const number = (defaultValue: number) => (override: string | undefined) => {
-    if (override) {
-        const overrideValue = Number(override);
-        if (!isNaN(overrideValue)) {
-            return overrideValue;
-        }
-    }
-
-    return defaultValue;
-};
-// TODO: грязно
-export const string = <T = string>(defaultValue: T): Overrider<T> => {
-    return (override: string | undefined) => {
-        if (override !== undefined) {
-            return (override as unknown) as T;
-        }
-
-        return (defaultValue as unknown) as T;
-    };
-};
-export const stringArray = (defaultValue: string[]): Overrider<string[]> => (override: string | undefined) => {
-    if (override !== undefined) {
-        const array = parseArray(override);
-        if (array) return array;
-    }
-    return defaultValue;
-};
-string.array = stringArray;
-export const stringOrBoolean = <T extends string>(defaultValue: T | boolean): Overrider<T | boolean> => {
-    return (override: string | undefined) => {
-        if (override !== undefined) {
-            if (override === 'true') {
-                return true;
-            } else if (override === 'false') {
-                return false;
-            }
-
-            return (override as unknown) as T;
-        }
-
-        return (defaultValue as unknown) as T;
-    };
-};
-
-export const boolean = (defaultValue: boolean): Overrider<boolean> => {
-    return (override: string | undefined) => {
-        if (override === 'true') {
-            return true;
-        } else if (override === 'false') {
-            return false;
-        }
-
+export const number = (defaultValue: number): Overrider<number> => (override) => {
+    if (override === undefined) {
         return defaultValue;
-    };
+    }
+    const overrideValue = _.toNumber(override);
+    if (!isNaN(overrideValue)) {
+        return overrideValue;
+    }
+    return defaultValue;
+};
+
+export const numberOrNull = (defaultValue: number | null): Overrider<number | null> => (override) => {
+    if (override === undefined) {
+        return defaultValue;
+    }
+    if (override === 'null' || override === null) {
+        return null;
+    }
+    const overrideValue = _.toNumber(override);
+    if (!isNaN(overrideValue)) {
+        return overrideValue;
+    }
+    return defaultValue;
+};
+number.orNull = numberOrNull;
+
+// TODO: грязно
+export const string = <T = string>(defaultValue: T): Overrider<T> => (override) => {
+    if (override !== undefined) {
+        return (override as unknown) as T;
+    }
+
+    return (defaultValue as unknown) as T;
+};
+
+export const stringOrBoolean = <T extends string>(defaultValue: T | boolean): Overrider<T | boolean> => (override) => {
+    if (override === undefined) {
+        return defaultValue;
+    }
+    if (override === 'true') {
+        return true;
+    }
+    if (override === 'false') {
+        return false;
+    }
+    return override as T;
+};
+export const stringOrNull = <T extends string>(defaultValue: T | null): Overrider<T | null> => (override) => {
+    if (override === undefined) {
+        return defaultValue;
+    }
+    if (override === 'null' || override === null) {
+        return null;
+    }
+    return override as T;
+};
+string.orNull = stringOrNull;
+
+export const boolean = (defaultValue: boolean): Overrider<boolean> => (override) => {
+    if (override === 'true') {
+        return true;
+    }
+    if (override === 'false') {
+        return false;
+    }
+    return defaultValue;
+};
+
+export const array = <T>(defaultValue: Array<T>, validator?: TypeValidator<T>): Overrider<Array<T>> => (override) => {
+    if (override === undefined) {
+        return defaultValue;
+    }
+    const array = parseArray(override, validator);
+    if (array !== undefined) {
+        return array;
+    }
+    return defaultValue;
 };

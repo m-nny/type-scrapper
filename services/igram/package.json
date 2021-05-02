@@ -21,6 +21,7 @@
     "graphql": "^15.5.0",
     "instagram-web-api": "^2.2.2",
     "moment": "^2.29.1",
+    "rate-limiter-flexible": "^2.2.1",
     "reflect-metadata": "^0.1.13",
     "tough-cookie": "^4.0.0",
     "tough-cookie-file-store": "^2.0.2",

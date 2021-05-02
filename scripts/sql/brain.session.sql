@@ -18,10 +18,11 @@ ORDER BY "followers" DESC
 -- @block create company table
 -- @conn brain
 SELECT
-    "followeeUsername" as username,
-    -- id,
-    -- COUNT(*) as followers
-    "followerUsername"
+COUNT(*)
+    -- "followeeUsername" as username,
+    -- -- id,
+    -- -- COUNT(*) as followers
+    -- "followerUsername"
 FROM
     instagram_user_follow
 WHERE "followeeUsername" = 'illyarkyn'

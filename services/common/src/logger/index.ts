@@ -1,29 +1,63 @@
+import _ from 'lodash';
 import pino, { Logger, LoggerOptions } from 'pino';
+import pinoColada from 'pino-colada';
+import PinoHttp from 'pino-http';
 import { configUtils } from '..';
 
+type LogPrettifier = 'pino-colada' | 'pino-pretty';
 type CreateLoggerArgs = {
+    logPrettifier: LogPrettifier | null;
     logger: LoggerOptions;
+    httpLogger: PinoHttp.Options;
 };
 
 export const defaultLoggerOptions = configUtils.createConfigPart({
-    level: configUtils.string('info'),
-    prettyPrint: configUtils.boolean(true),
+    logger: {
+        level: configUtils.string('info'),
+        prettyPrint: configUtils.boolean(true),
+    },
+    httpLogger: {
+        autoLogging: {
+            ignorePaths: configUtils.array(['/metrics', '/admin(.*)']),
+        },
+    },
+    logPrettifier: configUtils.stringOrNull<LogPrettifier>('pino-colada'),
 });
-const prettyPrint: LoggerOptions['prettyPrint'] = {
+const prettyPrintOptions: LoggerOptions['prettyPrint'] = {
     colorize: true,
     levelFirst: true,
     suppressFlushSyncWarning: true,
 };
 
 export const makeLogger = (config: CreateLoggerArgs): AppLogger => {
-    const logger = pino({ ...config.logger, ...(config.logger.prettyPrint ? prettyPrint : undefined) });
+    const loggerOptions: LoggerOptions = {
+        ...config.logger,
+    };
+    if (config.logger.prettyPrint) {
+        if (config.logPrettifier === 'pino-colada') {
+            loggerOptions.prettifier = pinoColada;
+        } else if (config.logPrettifier === 'pino-pretty') {
+            _.merge(loggerOptions, prettyPrintOptions);
+        }
+    }
+    const logger = pino(loggerOptions);
 
     logger.fatal = logger.fatal.bind(logger);
     logger.error = logger.error.bind(logger);
     logger.warn = logger.warn.bind(logger);
     logger.info = logger.info.bind(logger);
     logger.debug = logger.debug.bind(logger);
-    return new AppLogger(logger);
+    const appLogger = new AppLogger(logger);
+    setAppLogger(appLogger);
+    return appLogger;
+};
+
+export const makeHttpLoggerMiddleware = (config: CreateLoggerArgs): PinoHttp.HttpLogger => {
+    const { pino: logger } = getAppLogger();
+    return PinoHttp({
+        logger,
+        ...config.httpLogger,
+    });
 };
 
 export class AppLogger {

@@ -4,7 +4,7 @@ import { AsyncResult, OkResult } from '../../result';
 export * from './EnqueueImport';
 export * from './ImportInstagramUser';
 
-export type JobHandlers<Jobs extends string, JobArg = unknown, JobResult = OkResult> = Record<
+export type JobHandlers<Jobs extends string, JobArg = unknown, JobResult = unknown> = Record<
     Jobs,
     (args: JobArg) => AsyncResult<JobResult>
 >;

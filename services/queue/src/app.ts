@@ -1,4 +1,4 @@
-import { AppLogger, makeLogger } from '@app/common';
+import { AppLogger, makeHttpLoggerMiddleware, makeLogger } from '@app/common';
 import { ApolloServer } from 'apollo-server-express';
 import { router } from 'bull-board';
 import express from 'express';
@@ -35,6 +35,7 @@ export const createExpressApp = async (container: DependencyContainer) => {
     });
     const app = express();
     useQueues(container);
+    app.use(makeHttpLoggerMiddleware(config));
     app.use(config.adminPanel.endpoint, router);
     apolloServer.applyMiddleware({ app, cors: config.cors });
     return app;

@@ -6,12 +6,10 @@ export const defaultConfig = configUtils.createConfig({
     port: configUtils.number(3002),
     rootPrefix: configUtils.string(''),
     cors: {
-        origin: configUtils.string.array(['*']),
-        methods: configUtils.string.array(['GET', 'POST']),
+        origin: configUtils.array(['*']),
+        methods: configUtils.array(['GET', 'POST']),
     },
-    logger: {
-        ...defaultLoggerOptions,
-    },
+    ...defaultLoggerOptions,
     adminPanel: {
         endpoint: '/admin',
     },
@@ -23,6 +21,13 @@ export const defaultConfig = configUtils.createConfig({
         names: {
             importInstagramUser: configUtils.string('import_insta_user'),
             enqueueImport: configUtils.string('enqueue_import'),
+        },
+        jobOptions: {
+            attempts: configUtils.number(3),
+            backoff: {
+                type: configUtils.string('exponential'),
+                delay: configUtils.number(1000),
+            },
         },
     },
 });

@@ -77,9 +77,8 @@ export const loadConfig = <C extends RootConfigShape>(defaultConfig: C, appEnvOv
             colors: true,
         }),
     );
-    console.log(overridedConfig);
+    console.dir(overridedConfig, { showHidden: false, depth: null, colors: true });
     return overridedConfig;
 };
 export * from './cfgVar';
 export * from './types';
-

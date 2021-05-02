@@ -4,9 +4,8 @@ import {
     ImportInstagramUserJob,
     isImportInstagramUserJob,
     JobHandlers,
-    okResult,
     throwIfError,
-    UnknownJobNameError,
+    UnknownJobNameError
 } from '@app/models';
 import { Job, Processor } from 'bullmq';
 import { singleton } from 'tsyringe';
@@ -15,9 +14,9 @@ import { BrainMicroservice } from '../brain/BrainService';
 import {
     AddInstagramUserFollowedByMutationVariables,
     AddInstagramUserIsFollowingMutationVariables,
-    CreateInstagramUserMutationVariables,
+    CreateInstagramUserMutationVariables
 } from '../brain/sdk';
-import { filterJob, filterUserFollowers } from '../common/filters';
+import { filterError, filterJob, filterUserFollowers } from '../common/filters';
 import { InstagramMicroservice } from '../instagram/InstagramService';
 import { GetFollowersByIdQuery, GetFollowingsByIdQuery, GetProfileQuery } from '../instagram/sdk';
 import { QueueMicroservice } from '../queue/QueueService';
@@ -45,17 +44,15 @@ export class ImportInstagramUserProcessor {
     }
     public get processor(): Processor<ImportInstagramUserData> {
         return async (job) => {
+            const jobName = job.name;
             this.logger.debug(filterJob(job), `Running job #${job.id ?? 0}`);
-            try {
-                if (!isImportInstagramUserJob(job.name)) {
-                    throw new UnknownJobNameError(job.name, this.jobHandlers);
-                }
-                const handler = this.jobHandlers[job.name];
-                const result = await handler(job).then(throwIfError);
-                return result;
-            } catch (error) {
-                this.logError(job, error);
+            if (!isImportInstagramUserJob(jobName)) {
+                throw new UnknownJobNameError(jobName, this.jobHandlers);
             }
+            const handler = this.jobHandlers[jobName];
+            const result = await handler(job);
+            this.logger.info({ result, jobName }, `Job ${jobName} finished`);
+            return throwIfError(result);
         };
     }
 
@@ -70,89 +67,122 @@ export class ImportInstagramUserProcessor {
 
             await this.queueSdk.addImportUserJob({ jobName: 'getUserFollowers', jobData: data });
             await this.queueSdk.addImportUserJob({ jobName: 'getUserFollowings', jobData: data });
-            return okResult;
+            return instagramProfile.user;
         },
         getUserFollowers: async (job) => {
-            const { data } = job;
-            const instagramProfile = await this.instagramSdk.getProfile(data);
-            const followers = await this.getAllUserFollowers(instagramProfile.user.id);
+            const {
+                data: { cursor, username },
+            } = job;
+            const userId = await this.instagramSdk.getProfile({ username }).then((profile) => profile.user.id);
+            const followers = await this.getAllUserFollowers({ userId, cursor });
+            if (followers.cursor) {
+                this.logger.debug(
+                    { alreadyGot: followers.followers.length, total: followers.count },
+                    `User got more followers. Adding another job`,
+                );
+                await this.queueSdk.addImportUserJob({
+                    jobName: 'getUserFollowers',
+                    jobData: { username, cursor: followers.cursor },
+                });
+            }
             this.logger.debug(filterFollowers(followers), `Got user followers`);
-            const imported = await this.brainSdk.addInstagramUserFollowedBy(hydrateFollowers(data.username, followers));
+            const imported = await this.brainSdk.addInstagramUserFollowedBy(hydrateFollowers(username, followers));
             this.logger.info(imported, `saved user followers`);
-            return okResult;
+            return { importedFollowers: imported.instagramUserFollowedBy, username, userId };
         },
         getUserFollowings: async (job) => {
-            const { data } = job;
-            const instagramProfile = await this.instagramSdk.getProfile(data);
-            const followings = await this.getAllUserFollowings(instagramProfile.user.id);
+            const {
+                data: { username, cursor },
+            } = job;
+            const userId = await this.instagramSdk.getProfile({ username }).then((profile) => profile.user.id);
+            const followings = await this.getAllUserFollowings({ userId, cursor });
+            if (followings.cursor) {
+                this.logger.debug(
+                    { alreadyGot: followings.followings.length, total: followings.count },
+                    `User got more followings. Adding another job`,
+                );
+                await this.queueSdk.addImportUserJob({
+                    jobName: 'getUserFollowings',
+                    jobData: { username, cursor: followings.cursor },
+                });
+            }
             this.logger.debug(filterFollowings(followings), `Got user followings`);
-            const imported = await this.brainSdk.addInstagramUserIsFollowing(
-                hydrateFollowings(data.username, followings),
-            );
+            const imported = await this.brainSdk.addInstagramUserIsFollowing(hydrateFollowings(username, followings));
             this.logger.info(imported, `saved user followings`);
-            return okResult;
+            return { importedFollowings: imported.instagramUserFollowing, username, userId };
         },
     };
 
-    private getAllUserFollowings = async (
-        userId: string,
+    private getAllUserFollowings = async ({
+        userId,
+        cursor,
         maxNumber = this.maxFollowersNumber,
-    ): Promise<GetAllUserFollowingsResult> => {
-        let cursor = undefined;
+    }: GetFollowersArgs): Promise<GetAllUserFollowingsResult> => {
         const followings = [];
         let count = 0;
         while (followings.length < maxNumber) {
-            const result: GetFollowingsByIdQuery = await this.instagramSdk.getFollowingsById({ userId, cursor });
-            const userFollowings = result.followingsById;
-            const userFollowingsUsername = userFollowings.data.map((user) => user.username);
-            const hasNextPage = userFollowings.page_info.has_next_page;
-            cursor = userFollowings.page_info.end_cursor;
-            count = userFollowings.count;
+            try {
+                const result: GetFollowingsByIdQuery = await this.instagramSdk.getFollowingsById({ userId, cursor });
+                const userFollowings = result.followingsById;
+                const userFollowingsUsername = userFollowings.data.map((user) => user.username);
+                const hasNextPage = userFollowings.page_info.has_next_page;
+                cursor = userFollowings.page_info.end_cursor ?? undefined;
+                count = userFollowings.count;
 
-            followings.push(...userFollowingsUsername);
-            this.logger.debug(
-                filterUserFollowers(userFollowingsUsername),
-                `Got user ${userFollowingsUsername.length} followings. Has nextPage ${hasNextPage}`,
-            );
-            if (!hasNextPage) {
+                followings.push(...userFollowingsUsername);
+                this.logger.debug(
+                    filterUserFollowers(userFollowingsUsername),
+                    `Got user ${userFollowingsUsername.length} followings. Has nextPage ${hasNextPage}`,
+                );
+                if (!hasNextPage) {
+                    break;
+                }
+            } catch (e) {
+                if (followings.length === 0) {
+                    throw e;
+                }
+                this.logger.error(filterError(e), 'Some error happened while getting followings');
                 break;
             }
         }
-        return { count, followings };
+        return { count, followings, cursor };
     };
 
-    private getAllUserFollowers = async (
-        userId: string,
+    private getAllUserFollowers = async ({
+        userId,
+        cursor,
         maxNumber = this.maxFollowersNumber,
-    ): Promise<GetAllUserFollowersResult> => {
-        let cursor = undefined;
+    }: GetFollowersArgs): Promise<GetAllUserFollowersResult> => {
         const followers = [];
         let count = 0;
         while (followers.length < maxNumber) {
-            const result: GetFollowersByIdQuery = await this.instagramSdk.getFollowersById({ userId, cursor });
-            const userFollowers = result.followersById;
-            const userFollowersUsername = userFollowers.data.map((user) => user.username);
-            const hasNextPage = userFollowers.page_info.has_next_page;
-            cursor = userFollowers.page_info.end_cursor;
-            count = userFollowers.count;
+            try {
+                const result: GetFollowersByIdQuery = await this.instagramSdk.getFollowersById({ userId, cursor });
+                const userFollowers = result.followersById;
+                const userFollowersUsername = userFollowers.data.map((user) => user.username);
+                const hasNextPage = userFollowers.page_info.has_next_page;
+                cursor = userFollowers.page_info.end_cursor ?? undefined;
+                count = userFollowers.count;
 
-            followers.push(...userFollowersUsername);
-            this.logger.debug(
-                filterUserFollowers(userFollowersUsername),
-                `Got user ${userFollowersUsername.length} followers. Has nextPage ${hasNextPage}`,
-            );
-            if (!hasNextPage) {
+                followers.push(...userFollowersUsername);
+                this.logger.debug(
+                    filterUserFollowers(userFollowersUsername),
+                    `Got user ${userFollowersUsername.length} followers. Has nextPage ${hasNextPage}`,
+                );
+                if (!hasNextPage) {
+                    break;
+                }
+            } catch (e) {
+                if (followers.length === 0) {
+                    throw e;
+                }
+                this.logger.error(filterError(e), 'Some error happened while getting followers');
                 break;
             }
         }
-        return { count, followers };
+        return { count, followers, cursor };
     };
 
-    private logError<T, D>(job: Job<T>, error: any): D {
-        const jobName = job.name;
-        this.logger.error({ error, jobName }, `Error processing job ${jobName} in queue `);
-        throw error;
-    }
 }
 
 const makeInstagramUserInput = ({
@@ -178,3 +208,8 @@ const hydrateFollowers = (
     username,
     followedBy: followers,
 });
+type GetFollowersArgs = {
+    userId: string;
+    maxNumber?: number;
+    cursor?: string;
+};

@@ -14,7 +14,8 @@ export const loadStrFromFile = (filename: string): string | undefined => {
     }
 };
 
-export const parseArray = <T = string>(json: string, validator: (val: T) => boolean = _.isString): T[] | undefined => {
+export type TypeValidator<T> = (val: any) => val is T;
+export const parseArray = <T>(json: string, validator?: TypeValidator<T>): T[] | undefined => {
     let array: unknown;
     try {
         array = JSON.parse(json);
@@ -22,8 +23,10 @@ export const parseArray = <T = string>(json: string, validator: (val: T) => bool
         console.error('JSON is invalid ', json);
         return undefined;
     }
-    if (_.isArray(array) && array.every(validator)) {
-        return array;
+    if (_.isArray(array)) {
+        if (validator === undefined || _.every(array, validator)) {
+            return array;
+        }
     }
     return undefined;
 };

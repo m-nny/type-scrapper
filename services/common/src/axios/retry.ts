@@ -5,7 +5,7 @@ export type RetryAsyncResultCallback<T, P = unknown> = (retriesLeft: number) => 
 
 export const retryAsyncResult = async <D, P>(
     callback: RetryAsyncResultCallback<D, P>,
-    { decay = 2, timeout = 5, retries = 3 }: RetryArgs = {},
+    { decay, timeout, retries }: RetryArgs,
 ): AsyncResult<D, P> => {
     const data = await callback(retries);
     if (!isResultError(data) || retries <= 0) {

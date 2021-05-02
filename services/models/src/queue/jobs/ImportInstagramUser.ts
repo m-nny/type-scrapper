@@ -8,4 +8,5 @@ export const isImportInstagramUserJob = isEnumFactory(importInstagramUserJobs);
 
 export type ImportInstagramUserData = {
     username: string;
+    cursor?: string;
 };

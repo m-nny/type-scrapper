@@ -1,7 +1,8 @@
 import { AppLogger } from '@app/common';
-import { AsyncResult, makeResultErrorOnReject } from '@app/models';
+import { AsyncResult, isResultError, makeResultErrorOnReject } from '@app/models';
 import Instagram from 'instagram-web-api';
 import moment from 'moment';
+import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
 import {
     TInstagramConstructorArgs,
     TInstagramCredentials,
@@ -12,14 +13,16 @@ import {
     TInstagramProfile,
     TInstagramUser,
     TInstagramUserId,
-    TInstagramUsername,
+    TInstagramUsername
 } from './types';
 import { TInstagramFollowers } from './types/followers';
 
 export class InstagramClient {
     private client;
-    public constructor(args: TInstagramConstructorArgs, private logger: AppLogger) {
+    private rateLimiter;
+    public constructor(args: TInstagramConstructorArgs, private logger: AppLogger, rateLimiterOptions: IRateLimiterOptions) {
         this.client = new Instagram(args);
+        this.rateLimiter = new RateLimiterMemory(rateLimiterOptions);
     }
     public login(
         credentials: TInstagramCredentials,
@@ -43,12 +46,24 @@ export class InstagramClient {
         return this.requestHelper(() => this.client.getFollowings(args), 'getFollowings');
     }
 
-    private async requestHelper<T>(callback: () => AsyncResult<T>, name = 'anonymous'): AsyncResult<T> {
+    private async requestHelper<T>(callback: () => AsyncResult<T>, name: string): AsyncResult<T> {
+        const pointsConsumed = await this.rateLimiter.consume(name, 1, {}).catch(
+            makeResultErrorOnReject({
+                code: 'TOO_MANY_REQUESTS',
+                message: `Callback ${name} got too many requests`,
+            }),
+        );
+        if (isResultError(pointsConsumed)) {
+            return pointsConsumed;
+        }
         const start = moment();
         const data = await callback().catch(makeResultErrorOnReject());
         const end = moment();
         const took = moment.duration(end.diff(start)).asSeconds();
-        this.logger.debug({ end: end.unix(), start: start.unix() }, `Callback ${name} took ${took} seconds`);
+        this.logger.debug(
+            { end: end.unix(), start: start.unix(), pointsConsumed },
+            `Callback ${name} took ${took} seconds`,
+        );
         return data;
     }
 }

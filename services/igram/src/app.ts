@@ -1,4 +1,4 @@
-import { AppLogger, makeLogger } from '@app/common';
+import { AppLogger, makeHttpLoggerMiddleware, makeLogger } from '@app/common';
 import { AsyncOkResult, isResultError, makeResultError, okResult } from '@app/models';
 import { ApolloServer } from 'apollo-server-express';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
@@ -29,7 +29,7 @@ export const configureContainer = async (configOverride?: PartialConfig) => {
     const container = tsyringeContainer.createChildContainer();
     const logger = makeLogger(config);
     let cookieStore = makeCookieStore(config, logger);
-    const instagramClient = new InstagramClient({ ...config.instagram.credentials, cookieStore }, logger);
+    const instagramClient = new InstagramClient({ ...config.instagram.credentials, cookieStore }, logger, config.instagram.rateLimiter);
     container
         .register(AppLogger, { useValue: logger })
         .register(ConfigWrapper, { useValue: new ConfigWrapper(config) })
@@ -49,6 +49,7 @@ export const createExpressApp = async (container: DependencyContainer) => {
         plugins: [responseCachePlugin],
     });
     const app = express();
+    app.use(makeHttpLoggerMiddleware(config));
     apolloServer.applyMiddleware({ app });
     return app;
 };

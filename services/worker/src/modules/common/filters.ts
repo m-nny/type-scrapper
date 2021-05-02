@@ -9,3 +9,5 @@ export const filterUserFollowers = (followers: string[]) => ({
 
 export const filterArray = <T>(array: T[]) =>
     array.length < 5 ? array : { length: array.length, head: array.slice(0, 1)[0], tail: array.slice(-1)[0] };
+
+export const filterError = (error: any) => error;
