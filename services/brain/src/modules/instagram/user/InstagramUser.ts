@@ -1,5 +1,15 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryColumn, Repository } from 'typeorm';
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    OneToMany,
+    OneToOne,
+    PrimaryColumn,
+    Repository,
+} from 'typeorm';
 import { ListPage } from '../../common/dto';
 import { TListPageResult } from '../../common/type';
 import { InstagramImage } from '../image/InstagramImage';
@@ -8,7 +18,7 @@ import { InstagramUserInfo, InstagramUserInfoCreateDTO } from './InstagramUserIn
 
 @ObjectType()
 @Entity()
-export class InstagramUser {
+export class InstagramUser extends BaseEntity {
     @Field(() => ID)
     @PrimaryColumn()
     public username!: string;
@@ -56,6 +66,6 @@ export class InstagramUserKey implements TInstagramUserKey {
     @Field()
     public username!: string;
 }
-export type InstagramUserCreateDTO = Omit<InstagramUser, 'info' | 'images' | 'follows'> & {
+export type InstagramUserCreateDTO = Pick<InstagramUser, 'id' | 'username'> & {
     info?: InstagramUserInfoCreateDTO;
 };

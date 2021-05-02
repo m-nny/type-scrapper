@@ -6,6 +6,9 @@ export const defaultConfig = configUtils.createConfig({
     port: configUtils.number(3001),
     rootPrefix: configUtils.string(''),
     ...defaultLoggerOptions,
+    adminPanel: {
+        endpoint: '/admin',
+    },
     cors: {
         origin: configUtils.array(['*']),
         methods: configUtils.array(['GET', 'POST']),

@@ -1,8 +1,7 @@
+import { Person } from './admin/bro';
 import { instagramEntities, instagramResolvers } from './instagram';
-import { Recipe } from './recipe/Recipe';
-import { RecipeResolver } from './recipe/RecipeResolver';
 
-export const entities = [...instagramEntities, Recipe];
+export const entities = [...instagramEntities, Person];
 export const migrations = [];
 
-export const resolvers = [...instagramResolvers, RecipeResolver] as const;
+export const resolvers = [...instagramResolvers] as const;

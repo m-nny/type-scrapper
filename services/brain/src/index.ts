@@ -8,7 +8,9 @@ const runExpress = async (container: DependencyContainer) => {
     const app = await createExpressApp(container);
     return app.listen(config.port, () => {
         console.log(`Server started on port ${config.port}`);
-        console.log(`http://localhost:${config.port}/graphql`);
+        console.log(`Graphql:    http://localhost:${config.port}/graphql`);
+        console.log(`Metrics:    http://localhost:${config.port}/metrics`);
+        console.log(`Admin pane: http://localhost:${config.port}${config.adminPanel.endpoint}`);
     });
 };
 configureContainer().then(runExpress);

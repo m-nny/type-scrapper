@@ -1,21 +1,34 @@
 import { AppLogger, makeHttpLoggerMiddleware, makeLogger } from '@app/common';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
-import { container as tsyringeContainer, DependencyContainer } from 'tsyringe';
+import { container as tsyringeContainer, DependencyContainer, instanceCachingFactory } from 'tsyringe';
 import { buildSchema } from 'type-graphql';
-import { Connection, useContainer as useContainerForTypeOrm } from 'typeorm';
+import {
+    Connection,
+    ConnectionManager,
+    getConnection,
+    getConnectionManager,
+    useContainer as useContainerForTypeOrm,
+} from 'typeorm';
 import { ConfigWrapper, loadConfig, PartialConfig } from './config';
 import { resolvers } from './modules';
+import { useAdminBro } from './modules/admin/bro';
 import { makeTypeORMConnection } from './modules/typeorm';
 
 export const configureContainer = async (configOverride?: PartialConfig) => {
-    const config = loadConfig(configOverride);
     const container = tsyringeContainer.createChildContainer();
+    const config = loadConfig(configOverride);
     const logger = makeLogger(config);
     container
         .register(ConfigWrapper, { useValue: new ConfigWrapper(config) })
         .register(AppLogger, { useValue: logger });
     if (!config.typeorm.disabled) {
+        const manager = getConnectionManager();
+        container.register(ConnectionManager, { useValue: manager });
+        useContainerForTypeOrm(
+            { get: (x) => container.resolve(x as any) },
+            { fallback: false, fallbackOnErrors: false },
+        );
         const connection = await makeTypeORMConnection(config);
         container.register(Connection, { useValue: connection });
     }
@@ -32,8 +45,9 @@ export const createExpressApp = async (container: DependencyContainer) => {
         schema,
     });
     const app = express();
-    useContainerForTypeOrm({ get: (x) => container.resolve(x as any) }, { fallback: false, fallbackOnErrors: false });
+    const connection = getConnection();
     app.use(makeHttpLoggerMiddleware(config));
+    await useAdminBro(container, app, connection);
     apolloServer.applyMiddleware({ app });
     return app;
 };

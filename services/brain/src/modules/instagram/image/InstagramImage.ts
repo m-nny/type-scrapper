@@ -1,10 +1,10 @@
 import { Field, ObjectType } from 'type-graphql';
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { InstagramUser } from '../user/InstagramUser';
 
 @ObjectType()
 @Entity()
-export class InstagramImage {
+export class InstagramImage extends BaseEntity {
     @Field()
     @PrimaryColumn()
     public id!: string;

@@ -1,12 +1,12 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn, Repository } from 'typeorm';
+import { BaseEntity, Entity, JoinColumn, ManyToOne, PrimaryColumn, Repository } from 'typeorm';
 import { ListPage } from '../../../common/dto';
 import { TListPageResult } from '../../../common/type';
 import { InstagramUser } from '../InstagramUser';
 
 @Entity()
 @ObjectType()
-export class InstagramUserFollow {
+export class InstagramUserFollow extends BaseEntity {
     @Field(() => ID)
     @PrimaryColumn()
     public followerUsername!: string;

@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class InstagramUserInfo {
+export class InstagramUserInfo extends BaseEntity {
     @Field(() => ID)
     @PrimaryColumn()
     public id!: string;
@@ -18,4 +18,4 @@ export class InstagramUserInfo {
 }
 
 export type InstagramUserInfoKey = Pick<InstagramUserInfo, 'id'>;
-export type InstagramUserInfoCreateDTO = Omit<InstagramUserInfo, 'importDate'>;
+export type InstagramUserInfoCreateDTO = Pick<InstagramUserInfo, 'id' | 'avatarUrl'>;
