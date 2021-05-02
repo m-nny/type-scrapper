@@ -1,4 +1,4 @@
-import { utils } from '@app/common';
+import { makeUrl, retryWrapper } from '@app/common';
 import { GraphQLClient } from 'graphql-request';
 import { singleton } from 'tsyringe';
 import { ConfigWrapper } from '../../config';
@@ -9,7 +9,7 @@ export class QueueMicroservice {
     private client: GraphQLClient;
     public sdk: Sdk;
     public constructor({ config }: ConfigWrapper) {
-        this.client = new GraphQLClient(utils.makeUrl(config.microservice.queue));
-        this.sdk = getSdk(this.client);
+        this.client = new GraphQLClient(makeUrl(config.microservice.queue));
+        this.sdk = getSdk(this.client, retryWrapper(config.microservice.retry));
     }
 }

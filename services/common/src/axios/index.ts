@@ -1,6 +1,6 @@
 import { AsyncResult, getResultErrorCode, makeResultError, ResultError } from '@app/models';
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { RetryArgs } from '../utils';
+import { RetryArgs } from '../retry';
 import { retryAsyncResult } from './retry';
 
 export const axiosRequest = <T, E>(axios: AxiosInstance, config: AxiosRequestConfig): AsyncResult<T, E> =>

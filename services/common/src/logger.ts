@@ -2,7 +2,7 @@ import _ from 'lodash';
 import pino, { Logger, LoggerOptions } from 'pino';
 import pinoColada from 'pino-colada';
 import PinoHttp from 'pino-http';
-import { configUtils } from '..';
+import * as configUtils from './config';
 
 type LogPrettifier = 'pino-colada' | 'pino-pretty';
 type CreateLoggerArgs = {

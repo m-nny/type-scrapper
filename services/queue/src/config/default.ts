@@ -1,5 +1,6 @@
 import { configUtils, defaultLoggerOptions } from '@app/common';
-import { AppEnv, PartialConfigShape, PlainConfigShape } from '@app/common/dist/config/types';
+import { AppEnv, ConfigShapeFrom, PartialConfigShape, PlainConfigShape } from '@app/common/dist/config/types';
+import { JobsOptions } from 'bullmq';
 
 export const defaultConfig = configUtils.createConfig({
     env: 'dev' as AppEnv,
@@ -28,7 +29,7 @@ export const defaultConfig = configUtils.createConfig({
                 type: configUtils.string('exponential'),
                 delay: configUtils.number(1000),
             },
-        },
+        } as ConfigShapeFrom<JobsOptions>,
     },
 });
 export type ConfigShape = typeof defaultConfig;

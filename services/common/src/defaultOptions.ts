@@ -1,5 +1,5 @@
 import * as configUtils from './config';
-import { RetryArgs } from './utils';
+import { RetryArgs } from './retry';
 
 export const defaultOptions = {
     retry: configUtils.createConfigPartFrom<RetryArgs>({

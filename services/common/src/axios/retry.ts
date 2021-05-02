@@ -1,5 +1,5 @@
 import { AsyncResult, isResultError } from '@app/models';
-import { RetryArgs, sleepFor } from '../utils';
+import { RetryArgs, sleepFor } from '../retry';
 
 export type RetryAsyncResultCallback<T, P = unknown> = (retriesLeft: number) => AsyncResult<T, P>;
 

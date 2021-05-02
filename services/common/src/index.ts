@@ -1,6 +1,9 @@
-export * as utils from './utils';
+export * from './axios';
 export * as configUtils from './config';
 export * from './config/types';
-export * as axios from './axios';
-export * from './logger';
 export * from './defaultOptions';
+export * from './logger';
+export * from './picks';
+export * from './retry';
+export * from './types';
+export * from './url';
