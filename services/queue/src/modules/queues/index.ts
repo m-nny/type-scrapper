@@ -9,7 +9,7 @@ export const useQueues = (container: DependencyContainer) => {
     const { redis } = container.resolve(RedisWrapper);
     const queueNames = config.queue.names;
     const queues = [queueNames.importInstagramUser, queueNames.enqueueImport]
-        .map((queueName) => new Queue(queueName, { connection: redis }))
+        .map((queueName) => new Queue(queueName, { connection: redis, defaultJobOptions: config.queue.jobOptions }))
         .map((queue) => new BullMQAdapter(queue));
     setQueues(queues);
 };

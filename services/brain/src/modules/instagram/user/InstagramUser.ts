@@ -37,13 +37,11 @@ export class InstagramUser extends BaseEntity {
     public images?: InstagramImage;
 
     @Field(() => [InstagramUserFollow])
-    @OneToMany(() => InstagramUserFollow, (follow) => follow.followee)
-    @JoinTable()
+    @OneToMany(() => InstagramUserFollow, (follow) => follow.followedUser)
     public follows?: InstagramUserFollow[];
 
     @Field(() => [InstagramUserFollow])
-    @OneToMany(() => InstagramUserFollow, (follow) => follow.follower)
-    @JoinTable()
+    @OneToMany(() => InstagramUserFollow, (follow) => follow.followingUser)
     public followedBy?: InstagramUserFollow[];
 }
 

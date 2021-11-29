@@ -6,7 +6,7 @@ export type ConfigConstant = string | number | boolean | null;
 export type ConfigShape = {
     [key: string]:
         | Overrider<ConfigConstant>
-        | ArrayOverrider<ConfigConstant >
+        | ArrayOverrider<ConfigConstant>
         | ConfigConstant
         | ConfigShape;
 };

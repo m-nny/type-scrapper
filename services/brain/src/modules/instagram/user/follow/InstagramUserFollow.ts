@@ -9,21 +9,21 @@ import { InstagramUser } from '../InstagramUser';
 export class InstagramUserFollow extends BaseEntity {
     @Field(() => ID)
     @PrimaryColumn()
-    public followerUsername!: string;
+    public followingUsername!: string;
 
     @Field(() => ID)
     @PrimaryColumn()
-    public followeeUsername!: string;
+    public followedUsername!: string;
 
     @Field(() => InstagramUser)
     @ManyToOne(() => InstagramUser, (user) => user.followedBy, { primary: true, cascade: true })
     @JoinColumn({ name: 'followerUsername' })
-    public follower!: InstagramUser;
+    public followingUser!: InstagramUser;
 
     @Field(() => InstagramUser)
     @ManyToOne(() => InstagramUser, (user) => user.follows, { primary: true, cascade: true })
     @JoinColumn({ name: 'followeeUsername' })
-    public followee!: InstagramUser;
+    public followedUser!: InstagramUser;
 }
 
 @ObjectType()

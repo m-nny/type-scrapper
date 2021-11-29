@@ -20,12 +20,12 @@ export class InstagramUserFollowResolver implements ResolverInterface<InstagramU
         return await this.instagramUserFollowService.getCouple(page);
     }
     @FieldResolver()
-    public follower(@Root() root: InstagramUserFollow) {
-        return this.instagramUserService.getOrFail({ username: root.followerUsername });
+    public followingUser(@Root() root: InstagramUserFollow) {
+        return this.instagramUserService.getOrFail({ username: root.followingUsername });
     }
     @FieldResolver()
-    public followee(@Root() root: InstagramUserFollow) {
-        return this.instagramUserService.getOrFail({ username: root.followeeUsername });
+    public followedUser(@Root() root: InstagramUserFollow) {
+        return this.instagramUserService.getOrFail({ username: root.followedUsername });
     }
     @Mutation(() => Int)
     public async instagramUserFollowedBy(@Args() args: InstagramUserFollowedByInput): Promise<number> {

@@ -11,18 +11,18 @@ export class InstagramUserFollowService {
         this.repository = connection.getRepository(InstagramUserFollow);
     }
     public add(follower: string, followee: string) {
-        const follow = this.repository.create({ followerUsername: follower, followeeUsername: followee });
+        const follow = this.repository.create({ followingUsername: follower, followedUsername: followee });
         return this.repository.save(follow);
     }
-    public addManyFollowees(follower: string, followees: string[]) {
+    public addManyFollowees(followingUsername: string, followedUsernames: string[]) {
         const follows = this.repository.create(
-            followees.map((follows) => ({ followerUsername: follower, followeeUsername: follows })),
+            followedUsernames.map((followedUsername) => ({ followingUsername, followedUsername })),
         );
         return this.repository.save(follows);
     }
-    public addManyFollowers(followers: string[], followee: string) {
+    public addManyFollowers(followingUsernames: string[], followedUsername: string) {
         const follows = this.repository.create(
-            followers.map((follower) => ({ followerUsername: follower, followeeUsername: followee })),
+            followingUsernames.map((followingUsername) => ({ followingUsername, followedUsername })),
         );
         return this.repository.save(follows);
     }
@@ -33,13 +33,14 @@ export class InstagramUserFollowService {
         return { totalCount, items, askedPage: page };
     }
     public async getUserFollows(username: string): Promise<InstagramUserFollow[]> {
-        return await this.repository.find({ where: { followerUsername: username } });
+        return await this.repository.find({ where: { followingUsername: username } });
     }
     public async getUserFollowedBy(username: string): Promise<InstagramUserFollow[]> {
-        return await this.repository.find({ where: { followeeUsername: username } });
+        return await this.repository.find({ where: { followedUsername: username } });
     }
     public async getMostFollowedNotImportedUsers(page: TListPage): Promise<TInstagramUserFollowerCountList> {
-        const items: TInstagramUserFollowerCount[] = await this.repository.query(`
+        const items: TInstagramUserFollowerCount[] = await this.repository.query(
+            `
             SELECT
                 "followeeUsername" as username,
                 id,
@@ -52,7 +53,9 @@ export class InstagramUserFollowService {
             ORDER BY "followersCount" DESC, "username" ASC
             LIMIT $1
             OFFSET $2
-        `, [page.take, page.skip]);
+        `,
+            [page.take, page.skip],
+        );
         return { totalCount: items.length, items, askedPage: page };
     }
 }
